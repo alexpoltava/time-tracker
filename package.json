@@ -1,0 +1,63 @@
+{
+  "name": "time-tracker",
+  "version": "1.0.0",
+  "description": "App for time tracking",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --content-base public --debug --hot --output-pathinfo --watch --inline --port 8090",
+    "build": "cross-env NODE_ENV=production webpack -p",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "time",
+    "tracker",
+    "productivity"
+  ],
+  "author": "Alex Omelchenko",
+  "license": "ISC",
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "express": "^4.15.2",
+    "history": "^4.6.1",
+    "material-ui": "^0.18.1",
+    "moment": "^2.18.1",
+    "normalize.css": "^7.0.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
+    "react-router": "^4.1.1",
+    "react-router-redux": "^4.0.8",
+    "react-tap-event-plugin": "^2.0.1",
+    "redux": "^3.6.0",
+    "redux-saga": "^0.15.3",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^7.1.0",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "cross-env": "^5.0.0",
+    "css-loader": "^0.28.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.0",
+    "eslint-plugin-html": "^2.0.3",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^5.0.1",
+    "eslint-plugin-react": "^7.0.1",
+    "file-loader": "^0.11.1",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "postcss-loader": "^2.0.5",
+    "postcss-modules": "^0.7.0",
+    "react-hot-loader": "^1.3.1",
+    "style-loader": "^0.17.0",
+    "webpack": "^2.5.1",
+    "webpack-dev-server": "^2.4.5"
+  }
+}

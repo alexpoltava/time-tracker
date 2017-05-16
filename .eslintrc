@@ -1,0 +1,14 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    linebreak-style: [1, "windows"],
+    comma-dangle: 0,
+    indent: [2, 4, { "SwitchCase": 1 }],
+    react/jsx-indent: [2, 4],
+    react/jsx-filename-extension: [1, { "extensions": [".js", ".jsx"] }]
+  },
+  "plugins": ["html"],
+  "settings": {
+        "html/html-extensions": [".html"]
+    }
+}
