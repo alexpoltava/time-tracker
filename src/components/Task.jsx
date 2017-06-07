@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
-import {red500, green500, blue500} from 'material-ui/styles/colors';
+import Paper from 'material-ui/Paper';
+
+import humanizeDuration from 'humanize-duration';
 
 import { action } from '../actions';
 
-import style from './Timer.less';
+import style from './Task.less';
 
 @connect(
     state => ({
@@ -18,23 +20,26 @@ import style from './Timer.less';
         start: () => dispatch(action('START')),
         stop: () => dispatch(action('STOP')),
         reset: () => dispatch(action('RESET')),
-        another: () => dispatch(action('ANOTHER')),
     })
 )
-class Timer extends Component {
-    componentDidMount() {
-        this.timer = setInterval(() => this.props.another(), 1500);
-    }
 
-    componentWillUnmount() {
-        clearInterval(this.timer);
-    }
 
+export default class Task extends Component {
     render() {
+      const paperStyle = {
+        height: '64px',
+        width: '100%',
+        margin: '8px',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center'
+      };
+
         return (
             <div className={style.root}>
-                <h3>{this.props.time} seconds</h3>
-                <div>
+              <Paper style={paperStyle} zDepth={2}>
+                    <h3>My task</h3>
+                    <span>{ humanizeDuration(this.props.time * 1000) }</span>
                     <IconButton
                         iconClassName="material-icons"
                         tooltip="Reset"
@@ -46,7 +51,7 @@ class Timer extends Component {
                     <IconButton
                         iconClassName="material-icons"
                         tooltip="Start"
-                        disabled={this.props.status === 'RUNNING'}
+                        style={this.props.status === 'RUNNING' ? { 'display': 'none' } : null}
                         onClick={this.props.start}
                     >
                       play_arrow
@@ -54,15 +59,13 @@ class Timer extends Component {
                     <IconButton
                         iconClassName="material-icons"
                         tooltip="Stop"
-                        disabled={this.props.status === 'STOPPED'}
+                        style={this.props.status === 'STOPPED' ? { 'display': 'none' } : null}
                         onClick={this.props.stop}
                     >
                       pause
                     </IconButton>
-                </div>
+              </Paper>
             </div>
         )
     }
 }
-
-export default Timer;

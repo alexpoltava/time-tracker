@@ -4,9 +4,9 @@ import { delay } from 'redux-saga';
 import { action } from '../actions';
 
 export default function* root() {
-    const channel = yield actionChannel('START');
+    //const channel = yield actionChannel('START');
 
-    while (yield take(channel)) {
+    while (yield take('START')) {
         while (true) {
             const { stop } = yield race({
                 stop: take('STOP'),

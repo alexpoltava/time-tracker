@@ -12,7 +12,7 @@ module.exports = {
         filename: 'bundle.js'
     },
     watch: isDevelopment,
-    devtool: isDevelopment && 'eval-source-map',
+    devtool: isDevelopment && 'source-map',
     module: {
         rules: [
             {
