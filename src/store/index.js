@@ -6,7 +6,7 @@ import createSagaMiddleware from 'redux-saga';
 import rootReducer from '../reducers/index';
 import rootSaga from '../sagas';
 
-const devtools = window.devToolsExtension || (() => noop => noop);
+const devtools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || (() => noop => noop);
 
 export default function configureStore(initialState = {}) {
     const sagaMiddleware = createSagaMiddleware();

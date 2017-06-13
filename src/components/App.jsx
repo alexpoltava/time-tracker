@@ -1,63 +1,117 @@
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import { BrowserRouter, Route, Link, Switch, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { firebaseAuth } from '../config/constants';
+import RaisedButton from 'material-ui/RaisedButton';
+import CircularProgress from 'material-ui/CircularProgress';
 
-import { firebaseAuth } from '../config/constants'
 import requireAuth from './hoc/requireAuth.jsx';
 
-import Nav from './Nav.jsx'
-import LoggedInLayout from './protected/LoggedInLayout.jsx'
-import Dashboard from './protected/Dashboard.jsx'
-import Home from './Home.jsx'
-import Login from './Login.jsx'
-import Register from './Register.jsx'
+import Dashboard from './protected/Dashboard.jsx';
+import Home from './Home.jsx';
+import Login from './Login.jsx';
+import Register from './Register.jsx';
 
-import configureStore from '../store';
+import { loginSuccess, logout, logoutSuccess } from '../actions';
+import { withRouter } from 'react-router-dom';
+import muiThemeable from 'material-ui/styles/muiThemeable';
+
+import Alert from './utils/alert.jsx';
+
+import api from '../api';
 
 import styles from './App.less';
 
-const store = configureStore();
+const mapStateToProps = state => ({
+    isLoggedIn: state.session.isLoggedIn,
+    isLoggedOut: state.session.isLoggedOut,
+    isLoggingOut: state.session.isLoggingOut,
+    user: state.session.user
+});
 
-const routes = (
-    <Route component={Home}>
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
+@withRouter
+@connect(mapStateToProps, { loginSuccess, logout, logoutSuccess })
+class App extends Component {
+    state ={
+      showAlert: false
+    };
 
-        <Route component={requireAuth(LoggedInLayout)}>
-            <Route path="/dashboard" component={Dashboard} />
-        </Route>
-    </Route>
-);
+    closeAlert = () => {
+      this.setState({ showAlert: false });
+    }
 
-export default class App extends Component {
+    showAlert = () => {
+      this.setState({ showAlert: true });
+    }
 
     componentDidMount() {
-      this.removeListener = firebaseAuth().onAuthStateChanged((user) => {
-        if (user) {
-          // dispatch user is logged in
-        } else {
-          // dispatch user is logged out
-        }
-      })
+        this.removeListener = firebaseAuth().onAuthStateChanged((user) => {
+            if (user) {
+                this.props.loginSuccess(user);
+                const { history, location } = this.props;
+                history.push({
+                  pathname: location.state ? location.state.nextLocation.pathname : '/dashboard',
+                  search: location.state ? location.state.nextLocation.search : ''
+                });
+                user.emailVerified === false ? this.showAlert() : null;
+            } else {
+                this.props.logoutSuccess();
+            }
+        });
     }
     componentWillUnmount() {
-      this.removeListener()
+        this.removeListener();
     }
 
     render() {
         return (
-              <Provider store={store}>
-                  <BrowserRouter>
-                    <MuiThemeProvider>
-                        <div className={styles.app}>
-                            <Nav />
-                            {routes}
-                        </div>
-                    </MuiThemeProvider>
-                  </BrowserRouter>
-              </Provider>
+            <div className={styles.app}>
+              <div className={styles.nav}>
+                <div className={styles.links}>
+                  <NavLink exact to={'/'} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Home</NavLink>{' | '}
+                  {
+                    this.props.isLoggedIn === true
+                    ? <NavLink to={'/dashboard'} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Dashboard</NavLink>
+                    : null
+                  }
+                </div>
+                {
+                  this.props.isLoggedIn === true
+                  ? this.props.isLoggingOut === true
+                    ? <CircularProgress />
+                  : <div>
+                      <span>{this.props.user.email}</span>
+                      <span style={{fontSize: 'small', color: 'red'}}>{this.props.user.emailVerified ? null : '   unverified email'}</span>
+                      <RaisedButton
+                        className={styles.links}
+                        onClick={this.props.logout}
+                      >
+                        Logout
+                      </RaisedButton>
+                    </div>
+                  : <div className={styles.links}>
+                      <NavLink to={'/login'} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Login</NavLink> {' | '}
+                      <NavLink to={'/register'} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Register</NavLink>
+                    </div>
+                }
+              </div>
+              <hr />
+              <div className={styles.content}>
+                <Route exact path="/" component={Home} />
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={Register} />
+                <Route path="/dashboard" component={requireAuth(Dashboard)} />
+                <Alert
+                  open={this.state.showAlert}
+                  closeDialog={this.closeAlert}
+                >
+                  email has been sent to {this.props.user.email}. Check it to complete registration.
+                </Alert>
+              </div>
+            </div>
         );
     }
 }
+
+export default muiThemeable()(App);

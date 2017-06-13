@@ -1,24 +1,47 @@
 import { combineReducers } from 'redux';
-import {  LOGIN_REQUEST,
+import { LOGIN_REQUEST,
           LOGIN_SUCCESS,
           LOGIN_FAILURE,
-          LOGOUT
+          LOGIN_WITH_GOOGLE_REQUEST,
+          LOGIN_WITH_GOOGLE_FAILURE,
+          LOGOUT_REQUEST,
+          LOGOUT_SUCCESS,
+          LOGOUT_FAILURE
       } from '../actions';
 
 import timer from './timer';
 
-const session = (state = { isLoggingIn: false, isLoggedIn: false, error: null }, action) => {
+const session = (state = {
+    isLoggingIn: false,
+    isLoggingWithGoogleIn: false,
+    isLoggedIn: false,
+    isLoggingOut: false,
+    error: null,
+    user: {}
+}, action) => {
     switch (action.type) {
         case LOGIN_REQUEST:
             return {
                 ...state,
                 isLoggingIn: true,
             };
+        case LOGIN_WITH_GOOGLE_REQUEST:
+            return {
+                ...state,
+                isLoggingWithGoogleIn: true,
+            };
+        case LOGIN_WITH_GOOGLE_FAILURE:
+            return {
+                ...state,
+                isLoggingWithGoogleIn: false,
+            };
         case LOGIN_SUCCESS:
             return {
                 ...state,
                 isLoggingIn: false,
+                isLoggingWithGoogleIn: false,
                 isLoggedIn: true,
+                user: action.user,
             };
         case LOGIN_FAILURE:
             return {
@@ -27,16 +50,22 @@ const session = (state = { isLoggingIn: false, isLoggedIn: false, error: null },
                 isLoggedIn: false,
                 error: action.error,
             };
-        case LOGOUT:
+        case LOGOUT_REQUEST:
             return {
                 ...state,
-                isLoggingIn: false,
-                isLoggedIn: false
+                isLoggingOut: true,
+            };
+        case LOGOUT_SUCCESS:
+            return {
+                ...state,
+                isLoggingOut: false,
+                isLoggedIn: false,
+                user: {},
             };
         default:
-            return state
+            return state;
     }
-}
+};
 
 
 export default combineReducers({

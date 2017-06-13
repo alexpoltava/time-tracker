@@ -2,9 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 const mapStateToProps = state => ({
-    isLoggedIn: state.session.isLoggedIn,
-    pathname: state.routing.locationBeforeTransitions.pathname,
-    query: state.routing.locationBeforeTransitions.query,
+    isLoggedIn: state.session.isLoggedIn
 });
 
 export default function requireAuth(Component) {
@@ -20,12 +18,13 @@ export default function requireAuth(Component) {
 
         checkAuth(props) {
             if (!props.isLoggedIn) {
-                props.replace({
+                // console.log(props.isLoggedIn);
+                this.props.history.replace({
                     pathname: '/login',
                     state: {
                         nextLocation: {
-                            pathname: props.pathname,
-                            query: props.query,
+                            pathname: props.location.pathname,
+                            search: props.location.search,
                         }
                     }
                 });
