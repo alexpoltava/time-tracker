@@ -6,24 +6,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import api from '../api';
 
-const componentStyle = {
-  display: 'flex',
-  width: '100%',
-  justifyContent: 'center'
-};
-
-const paperStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  width: 240,
-  alignItems: 'center',
-  margin: 16
-};
-
-const inputStyle = {
-  margin: 16,
-  width: '80%'
-};
+import styles from './LoginRegister.less';
 
 export default class Register extends Component {
   constructor(props) {
@@ -32,16 +15,14 @@ export default class Register extends Component {
     this.state = {
       email: '',
       password: '',
+      password2: '',
       isEmailValid: true,
       isPasswordValid: true,
+      isPassword2Valid: true,
       registrationInProgress: false,
       errorMessage: '',
       isRegisterSuccess: false
     };
-  }
-
-  componentWillUnmount(){
-
   }
 
   validateInput = () => {
@@ -52,6 +33,10 @@ export default class Register extends Component {
     }
     if (this.state.password === '') {
         this.setState({ isPasswordValid: false });
+        isInputValid = false;
+    }
+    if (this.state.password2 === '') {
+        this.setState({ isPasswor2dValid: false });
         isInputValid = false;
     }
     return isInputValid;
@@ -73,8 +58,25 @@ export default class Register extends Component {
     });
   };
 
+  handlePasword2Change = (event) => {
+    this.setState({
+      password2: event.target.value,
+      isPassword2Valid: true,
+      errorMessage: ''
+    });
+  };
+
+  comparePasswords = () => (this.state.password === this.state.password2);
+
   handleRegister = () => {
-    if (this.validateInput() ===true){
+    if (this.validateInput() === true){
+        if(!this.comparePasswords()) {
+          return this.setState({
+            registrationInProgress: false,
+            isRegisterSuccess: false,
+            errorMessage: 'Passwords should be the same'
+          });
+        }
         this.setState({
           registrationInProgress: true
         }, () => (
@@ -97,37 +99,46 @@ export default class Register extends Component {
 
   render () {
     return (
-      <div style={componentStyle}>
-        <Paper style={paperStyle}>
-          <span style={inputStyle}>Register using e-mail</span>
+      <div className={styles.componentStyle}>
+        <Paper className={styles.paperStyle}>
+          <span className={styles.inputStyle}>Register using e-mail</span>
           <TextField
+              className={styles.inputStyle}
               hintText="e-mail"
               disabled={this.state.isRegisterSuccess}
               errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
               name="Email"
-              style={inputStyle}
               value={this.state.email}
               onChange={this.handleEmailChange}
           />
           <TextField
+              className={styles.inputStyle}
               hintText="password"
               disabled={this.state.isRegisterSuccess}
               errorText={this.state.isPasswordValid ? '' : 'password is required'}
               name="Password"
-              style={inputStyle}
               type="password"
               value={this.state.password}
               onChange={this.handlePaswordChange}
           />
-          <span style={
-              Object.assign({}, inputStyle,
-                      {
+          <TextField
+              className={styles.inputStyle}
+              hintText="confirm password"
+              disabled={this.state.isRegisterSuccess}
+              errorText={this.state.isPassword2Valid ? '' : 'password is required'}
+              name="Password2"
+              type="password"
+              value={this.state.password2}
+              onChange={this.handlePasword2Change}
+          />
+          <span
+              className={styles.inputStyle}
+              style={{
                         color:`${this.state.isRegisterSuccess === true ? "green" : "red"}`,
                         display: `${this.state.errorMessage === '' ? 'none': 'block'}`,
                         fontSize: 'small',
                         textAlign: 'left'
-                      })
-                    }
+                      }}
           >
             {this.state.errorMessage}
           </span>
@@ -135,16 +146,11 @@ export default class Register extends Component {
             this.state.registrationInProgress === true
             ? <CircularProgress />
             : <FlatButton
+                className={styles.btnRegister}
                 label="Register"
                 primary={true}
+                style={{margin: '16px'}}
                 disabled={this.state.isRegisterSuccess}
-                style={
-                  Object.assign({}, inputStyle,
-                    {
-                      alignSelf: 'flex-end',
-                      width: '50%'
-                    })
-                  }
                 onTouchTap={this.handleRegister}
               />
           }

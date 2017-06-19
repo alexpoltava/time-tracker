@@ -34,11 +34,11 @@ export default class Task extends Component {
         justifyContent: 'space-around',
         alignItems: 'center'
       };
-
+      const { name } = this.props;
         return (
             <div className={style.root}>
               <Paper style={paperStyle} zDepth={2}>
-                    <h3>My task</h3>
+                    <h3>{name}</h3>
                     <span>{ humanizeDuration(this.props.time * 1000) }</span>
                     <IconButton
                         iconClassName="material-icons"

@@ -10,6 +10,7 @@ import { LOGIN_REQUEST,
       } from '../actions';
 
 import timer from './timer';
+import { task, tasks } from './task';
 
 const session = (state = {
     isLoggingIn: false,
@@ -70,5 +71,7 @@ const session = (state = {
 
 export default combineReducers({
     timer,
+    task,
+    tasks,
     session
 });
