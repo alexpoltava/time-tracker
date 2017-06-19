@@ -1,6 +1,39 @@
 import { ref, firebaseAuth } from '../config/constants';
 import session from '../components/utils/session';
 
+// /////////////// database operations //////////////////////////
+const dbWriteUserData = (email, uid, emailSent) => (
+    ref.child(`users/${uid}/info`)
+      .set({
+          email,
+          uid,
+          emailSent
+      })
+);
+
+const isUserExist = uid => ref(`users/${uid}`).key;
+
+const dbAddNewTask = (payload) => {
+    const uid = firebaseAuth().currentUser.uid;
+    const tasks = ref.child(`users/${uid}/tasks`);
+    const newTask = tasks.push();
+    newTask.set({ id: newTask.key, ...payload });
+};
+
+const dbFetchTasks = () => {
+    const uid = firebaseAuth().currentUser.uid;
+    const tasks = ref.child(`users/${uid}/tasks`);
+    return tasks.once('value');
+};
+
+const dbTaskRemove = key => {
+    const uid = firebaseAuth().currentUser.uid;
+    const task = ref.child(`users/${uid}/tasks/${key}`);
+    return task.remove();
+}
+
+// //////////////////////////////////////////////////////////////
+
 const logout = () => firebaseAuth().signOut();
 
 const login = (email, pw) => {
@@ -14,21 +47,10 @@ const resetPassword = email => firebaseAuth().sendPasswordResetEmail(email);
 const saveUser = (user) => {
     if (user.emailVerified === false) {
         return user.sendEmailVerification()
-          .then(() =>
-              ref.child(`users/${user.uid}/info`)
-                .set({
-                    email: user.email,
-                    uid: user.uid,
-                    emailSent: true
-                }))
+          .then(() => dbWriteUserData(user.email, user.uid, true))
           .catch(err => console.log(err.message));
     }
-    return ref.child(`users/${user.uid}/info`)
-      .set({
-          email: user.email,
-          uid: user.uid,
-          emailSent: false
-      });
+    return dbWriteUserData(user.email, user.uid, false);
 };
 
 const register = (email, pw) => {
@@ -62,5 +84,9 @@ export default {
     loginWithGoogleAccount,
     saveUser,
     signInWithGoogleCredential,
-    signInWithCredential
+    signInWithCredential,
+    isUserExist,
+    dbAddNewTask,
+    dbFetchTasks,
+    dbTaskRemove
 };

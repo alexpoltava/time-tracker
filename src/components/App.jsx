@@ -13,14 +13,14 @@ import Home from './Home.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
 
-import { loginSuccess, logout, logoutSuccess } from '../actions';
+import { loginSuccess, logout, logoutSuccess, taskAdded, taskRemoved } from '../actions';
 import { withRouter } from 'react-router-dom';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
 import Alert from './utils/alert.jsx';
 
 import api from '../api';
-
+import { ref } from '../config/constants';
 import styles from './App.less';
 
 const mapStateToProps = state => ({
@@ -31,7 +31,7 @@ const mapStateToProps = state => ({
 });
 
 @withRouter
-@connect(mapStateToProps, { loginSuccess, logout, logoutSuccess })
+@connect(mapStateToProps, { loginSuccess, logout, logoutSuccess, taskAdded, taskRemoved })
 class App extends Component {
     state ={
       showAlert: false
@@ -55,6 +55,15 @@ class App extends Component {
                   search: location.state ? location.state.nextLocation.search : ''
                 });
                 user.emailVerified === false ? this.showAlert() : null;
+
+                ref.child(`users/${user.uid}/tasks`).on('child_added', (childSnapshot, prevChildKey) => {
+                    this.props.taskAdded(childSnapshot.key, childSnapshot.val());
+                });
+                ref.child(`users/${user.uid}/tasks`).on('child_removed', (childSnapshot) => {
+                    this.props.taskRemoved(childSnapshot.key);
+                });
+
+
             } else {
                 this.props.logoutSuccess();
             }

@@ -9,6 +9,8 @@ import GoogleButton from 'react-google-button'
 
 import { login, loginWithGoogleAccount } from '../actions';
 
+import styles from './LoginRegister.less';
+
 const mapStateToProps = state => ({
     isLoggedIn: state.session.isLoggedIn,
     isLoggingIn: state.session.isLoggingIn,
@@ -16,40 +18,17 @@ const mapStateToProps = state => ({
     error: state.session.error
 });
 
-const componentStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  alignItems: 'center'
-};
-
-const paperStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  width: 240,
-  alignItems: 'center',
-  margin: 16
-};
-
-const inputStyle = {
-  margin: 16,
-  width: '80%'
-};
-
 @withRouter
 @connect(mapStateToProps, { login, loginWithGoogleAccount })
 export default class Login extends Component {
 
-    constructor(props) {
-      super(props);
-
-      this.state = {
+    state = {
         email: '',
         password: '',
         isEmailValid: true,
         isPasswordValid: true,
       };
-    }
+
 
     validateInput = () => {
       let isInputValid = true;
@@ -91,14 +70,14 @@ export default class Login extends Component {
 
     render() {
         return (
-            <div style={componentStyle}>
-                <Paper style={paperStyle}>
-                  <span style={inputStyle}>Log in with e-mail</span>
+            <div className={styles.componentStyle}>
+                <Paper className={styles.paperStyle}>
+                  <span className={styles.inputStyle}>Log in with e-mail</span>
                   <TextField
                       hintText="e-mail"
                       errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
                       name="Email"
-                      style={inputStyle}
+                      className={styles.inputStyle}
                       value={this.state.email}
                       onChange={this.handleEmailChange}
                   />
@@ -106,20 +85,18 @@ export default class Login extends Component {
                       hintText="password"
                       errorText={this.state.isPasswordValid ? '' : 'password is required'}
                       name="Password"
-                      style={inputStyle}
+                      className={styles.inputStyle}
                       type="password"
                       value={this.state.password}
                       onChange={this.handlePaswordChange}
                   />
-                  <span style={
-                      Object.assign({}, inputStyle,
-                              {
-                                color: "red",
+                  <span className={styles.inputStyle}
+                        style={{
+                                color: 'red',
                                 display: `${this.props.error === null ? 'none': 'block'}`,
                                 fontSize: 'small',
                                 textAlign: 'left'
-                              })
-                            }
+                              }}
                   >
                     {this.props.error ? this.props.error.message : null}
                   </span>
@@ -127,13 +104,11 @@ export default class Login extends Component {
                     this.props.isLoggingIn === true
                     ? <CircularProgress />
                     : <FlatButton
+                        className={styles.btnLogin}
                         label="Login"
                         disabled={this.props.isLoggedIn}
                         primary={true}
-                        style={Object.assign({}, inputStyle, {
-                          alignSelf: 'flex-end',
-                          width: '25%'
-                        })}
+                        style={{margin: '16px'}}
                         onTouchTap={this.handleLogin}
                       />
                   }
@@ -142,6 +117,7 @@ export default class Login extends Component {
                   this.props.isLoggingWithGoogleIn === true
                   ? <CircularProgress />
                   : <GoogleButton
+                      className={styles.btnGoogle}
                       type='light'
                       disabled={this.props.isLoggedIn}
                       onClick={this.handleLoginWithGoogleAccount}

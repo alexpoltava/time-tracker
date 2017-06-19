@@ -19,12 +19,16 @@ import style from './Task.less';
     dispatch => ({
         start: () => dispatch(action('START')),
         stop: () => dispatch(action('STOP')),
-        reset: () => dispatch(action('RESET')),
+        reset: () => dispatch(action('RESET'))
     })
 )
 
 
 export default class Task extends Component {
+    handleDelete = () => {
+        this.props.onDelete(this.props.id);
+    }
+
     render() {
       const paperStyle = {
         height: '64px',
@@ -34,11 +38,11 @@ export default class Task extends Component {
         justifyContent: 'space-around',
         alignItems: 'center'
       };
-
+      const { name } = this.props;
         return (
             <div className={style.root}>
               <Paper style={paperStyle} zDepth={2}>
-                    <h3>My task</h3>
+                    <h3>{name}</h3>
                     <span>{ humanizeDuration(this.props.time * 1000) }</span>
                     <IconButton
                         iconClassName="material-icons"
@@ -63,6 +67,13 @@ export default class Task extends Component {
                         onClick={this.props.stop}
                     >
                       pause
+                    </IconButton>
+                    <IconButton
+                        iconClassName="material-icons"
+                        tooltip="Delete task"
+                        onClick={this.handleDelete}
+                    >
+                      delete
                     </IconButton>
               </Paper>
             </div>

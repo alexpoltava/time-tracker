@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Task from './Task.jsx';
-import style from './View.less';
+import TasksList from './TasksList.jsx';
+import AddTask from './AddTask.jsx';
 
 export default class View extends Component {
     render() {
         return (
-          <div className={style.root}>
-            <Task />
-          </div>
+            <div>
+                <AddTask />
+                <TasksList />
+            </div>
         );
     }
 }
