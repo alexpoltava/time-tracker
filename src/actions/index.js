@@ -19,6 +19,8 @@ export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 
+export const RESTORE_AUTH = 'RESTORE_AUTH';
+
 export const logoutSuccess = () => ({
     type: LOGOUT_SUCCESS
 });
@@ -82,6 +84,9 @@ export const loginWithGoogleAccount = () => (dispatch) => {
 };
 
 export const restoreAuth = credential => (dispatch) => {
+    dispatch({
+        type: RESTORE_AUTH
+    });
     switch (credential.providerId) {
         case 'google.com':
             return api.signInWithGoogleCredential(credential);
@@ -115,9 +120,7 @@ export const fetchTasksList = () => (dispatch) => {
     .catch(error => (dispatch({ type: FETCH_FAILURE, error })));
 };
 
-export const taskRemove = key => () => {
-    return api.dbTaskRemove(key);
-};
+export const taskRemove = key => () => api.dbTaskRemove(key);
 
 export const taskAdded = (key, payload) => ({
     type: TASK_ADDED,

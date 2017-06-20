@@ -6,7 +6,8 @@ import { LOGIN_REQUEST,
           LOGIN_WITH_GOOGLE_FAILURE,
           LOGOUT_REQUEST,
           LOGOUT_SUCCESS,
-          LOGOUT_FAILURE
+          LOGOUT_FAILURE,
+          RESTORE_AUTH
       } from '../actions';
 
 import timer from './timer';
@@ -63,6 +64,8 @@ const session = (state = {
                 isLoggedIn: false,
                 user: {},
             };
+        case RESTORE_AUTH:
+            return state;
         default:
             return state;
     }

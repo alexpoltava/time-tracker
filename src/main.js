@@ -65,6 +65,7 @@ const startApp = () => {
         .catch((error) => {
             console.log(error.message);
             session.clearSession();
+            renderApp();
         });
     } else {
         renderApp();
