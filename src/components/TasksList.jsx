@@ -27,6 +27,7 @@ export default class TaskList extends Component {
                     key={key}
                     id={list[key].id}
                     name={list[key].name}
+                    description={list[key].description}
                     onDelete={this.onDelete}
                   />
                 )

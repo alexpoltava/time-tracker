@@ -1,7 +1,37 @@
 .root {
-  margin: 24;
+  margin: 24px;
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   width: 600px;
-  justify-content: flex-end;
+}
+
+.controls {
+  display: flex;
+  transition-delay: 2s;
+}
+
+.info {
+  display: flex;
+  margin: 6px;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 75%;
+}
+
+.name {
+  font-size: larger;
+}
+
+.description {
+  font-size: small;
+}
+
+.delete {
+  display: none;
+}
+
+.delete:hover {
+  display: none;
 }
