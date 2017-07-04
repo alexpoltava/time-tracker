@@ -17,6 +17,7 @@ const dbAddNewTask = (payload) => {
     const uid = firebaseAuth().currentUser.uid;
     const tasks = ref.child(`users/${uid}/tasks`);
     const newTask = tasks.push();
+    console.log({ id: newTask.key, ...payload });
     newTask.set({ id: newTask.key, ...payload });
 };
 
@@ -26,11 +27,11 @@ const dbFetchTasks = () => {
     return tasks.once('value');
 };
 
-const dbTaskRemove = key => {
+const dbTaskRemove = (key) => {
     const uid = firebaseAuth().currentUser.uid;
     const task = ref.child(`users/${uid}/tasks/${key}`);
     return task.remove();
-}
+};
 
 // //////////////////////////////////////////////////////////////
 

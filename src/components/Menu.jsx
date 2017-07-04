@@ -14,19 +14,14 @@ let SelectableList = makeSelectable(List);
 
 function wrapState(ComposedComponent) {
     return class SelectableList extends Component {
-        constructor() {
-            super();
-
-            this.handleRequestChange = this.handleRequestChange.bind(this);
-        }
-
         componentWillMount() {
             this.setState({
                 selectedIndex: this.props.defaultValue,
             });
         }
 
-        handleRequestChange(event, index) {
+        handleRequestChange = (event, index) => {
+            this.props.onSelectMenuItem(index);
             this.setState({
                 selectedIndex: index,
             });
@@ -48,13 +43,12 @@ function wrapState(ComposedComponent) {
 SelectableList = wrapState(SelectableList);
 
 export default class Menu extends Component {
-    constructor() {
-        super();
-    }
-
     render() {
         return (
-            <SelectableList defaultValue={1}>
+            <SelectableList
+                defaultValue={1}
+                onSelectMenuItem={this.props.onSelectMenuItem}
+            >
                 <ListItem
                   value={1}
                   primaryText="Tasks"

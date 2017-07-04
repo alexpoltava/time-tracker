@@ -27,71 +27,41 @@ export const logoutSuccess = () => ({
 
 export const logout = () => (dispatch) => {
     session.clearSession();
-    dispatch({
-        type: LOGOUT_REQUEST
-    });
+    dispatch({ type: LOGOUT_REQUEST });
+
     return api.logout()
-        .then(
-            null,
-            error => (
-                dispatch({
-                    error,
-                    type: LOGOUT_FAILURE
-                })
-            ),
-        );
+        .catch(error => (dispatch({ error, type: LOGOUT_FAILURE })));
 };
 
-
-export const loginSuccess = user => ({
-    user,
-    type: LOGIN_SUCCESS
-});
+export const loginSuccess = user => ({ user, type: LOGIN_SUCCESS });
 
 export const login = (email, password) => (dispatch) => {
-    dispatch({
-        type: LOGIN_REQUEST
-    });
+    dispatch({ type: LOGIN_REQUEST });
 
     return api.login(email, password)
-        .then(
-            null,
-            error => (
-                dispatch({
-                    error,
-                    type: LOGIN_FAILURE
-                })
-            ),
-        );
+            .catch(error => (dispatch({ error, type: LOGIN_FAILURE })));
 };
 
 export const loginWithGoogleAccount = () => (dispatch) => {
-    dispatch({
-        type: LOGIN_WITH_GOOGLE_REQUEST
-    });
+    dispatch({ type: LOGIN_WITH_GOOGLE_REQUEST });
+
     return api.loginWithGoogleAccount()
         .then((result) => {
             if (api.isUserExist) api.saveUser(result.user);
             session.saveSession(result.credential);
-        },
-            error => (
-                dispatch({
-                    error,
-                    type: LOGIN_WITH_GOOGLE_FAILURE
-                })
-            ),
-        );
+        })
+        .catch(error => (dispatch({ error, type: LOGIN_WITH_GOOGLE_FAILURE })));
 };
 
 export const restoreAuth = credential => (dispatch) => {
-    dispatch({
-        type: RESTORE_AUTH
-    });
+    dispatch({ type: RESTORE_AUTH });
+
     switch (credential.providerId) {
         case 'google.com':
             return api.signInWithGoogleCredential(credential);
         case 'password':
             return api.signInWithCredential(credential);
+        default:
     }
 };
 
@@ -105,19 +75,15 @@ export const TASK_ADDED = 'TASK_ADDED';
 export const TASK_REMOVED = 'TASK_REMOVED';
 
 export const addNewTask = payload => (dispatch) => {
-    dispatch({
-        type: ADD_TASK
-    });
+    dispatch({ type: ADD_TASK });
     return api.dbAddNewTask(payload);
 };
 
 export const fetchTasksList = () => (dispatch) => {
-    dispatch({
-        type: FETCH_REQUEST
-    });
+    dispatch({ type: FETCH_REQUEST });
     return api.dbFetchTasks()
-    .then(snap => (dispatch({ type: FETCH_SUCCESS, list: snap.val() })))
-    .catch(error => (dispatch({ type: FETCH_FAILURE, error })));
+        .then(snap => (dispatch({ type: FETCH_SUCCESS, list: snap.val() })))
+        .catch(error => (dispatch({ type: FETCH_FAILURE, error })));
 };
 
 export const taskRemove = key => () => api.dbTaskRemove(key);

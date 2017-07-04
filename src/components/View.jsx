@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
-import TasksList from './TasksList.jsx';
-import AddTask from './AddTask.jsx';
+import ViewTasks from './ViewTasks.jsx';
+import ViewAnalytics from './ViewAnalytics.jsx';
+import ViewSettings from './ViewSettings.jsx';
+import ViewAbout from './ViewAbout.jsx';
 
 export default class View extends Component {
     render() {
-        return (
-            <div>
-                <AddTask />
-                <TasksList />
-            </div>
-        );
+        switch (this.props.menuItem) {
+            case 2: {
+                return <ViewAnalytics />;
+            }
+            case 3: {
+                return <ViewSettings />;
+            }
+            case 4: {
+                return <ViewAbout />;
+            }
+            default: {
+                return <ViewTasks />;
+            }
+        }
     }
 }

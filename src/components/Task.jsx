@@ -1,27 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import Paper from 'material-ui/Paper';
-
-import humanizeDuration from 'humanize-duration';
-
-import { action } from '../actions';
+import duration from './utils/duration';
 
 import style from './Task.less';
-
-@connect(
-    state => ({
-        time: state.timer.time,
-        status: state.timer.status,
-    }),
-    dispatch => ({
-        start: () => dispatch(action('START')),
-        stop: () => dispatch(action('STOP')),
-        reset: () => dispatch(action('RESET'))
-    })
-)
 
 
 export default class Task extends Component {
@@ -39,6 +23,19 @@ export default class Task extends Component {
     handleMouseOut = () => {
         this.setState({isHovered: false});
     }
+
+    handleStart = () => {
+      this.props.start(this.props.id);
+    }
+
+    handleStop = () => {
+      this.props.stop(this.props.id);
+    }
+
+    handleReset = () => {
+      this.props.reset(this.props.id);
+    }
+
     render() {
       const paperStyle = {
         height: '64px',
@@ -52,7 +49,7 @@ export default class Task extends Component {
         opacity: '1',
         transition: 'opacity 1s linear 0.5s'
       };
-      const { name, description } = this.props;
+      const { id, name, description } = this.props;
         return (
               <Paper
                 style={paperStyle}
@@ -64,14 +61,14 @@ export default class Task extends Component {
                     <div className={style.info}>
                       <span className={style.name}>{name}</span>
                       <span className={style.description}>{description}</span>
-                      { humanizeDuration(this.props.time * 1000) }
+                      {duration(this.props.time)}
                     </div>
                     <div className={style.controls}>
                       <IconButton
                           iconClassName="material-icons"
                           tooltip="Reset"
                           disabled={this.props.status === 'RUNNING'}
-                          onClick={this.props.reset}
+                          onClick={this.handleReset}
                       >
                         replay
                       </IconButton>
@@ -79,7 +76,7 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           tooltip="Start"
                           style={this.props.status === 'RUNNING' ? { 'display': 'none' } : null}
-                          onClick={this.props.start}
+                          onClick={this.handleStart}
                       >
                         play_arrow
                       </IconButton>
@@ -87,7 +84,7 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           tooltip="Stop"
                           style={this.props.status === 'STOPPED' ? { 'display': 'none' } : null}
-                          onClick={this.props.stop}
+                          onClick={this.handleStop}
                       >
                         pause
                       </IconButton>

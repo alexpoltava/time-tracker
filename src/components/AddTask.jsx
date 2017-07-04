@@ -125,9 +125,11 @@ class AddTask extends Component {
     handleAdd = () => {
       if (this.validateInput()) {
         const { name, tagsString, description, category, dateTimeStart, dateTimeComplete, isComplete } = this.state;
-        // console.log({name, this.tagsStringToArray(tagsString), description, category, dateTimeStart, dateTimeComplete, isComplete});
         const tagsArray = this.tagsStringToArray(tagsString);
-        this.props.addNewTask({name, tagsArray, description, category, dateTimeStart, dateTimeComplete, isComplete})
+        const dateStart = +dateTimeStart;
+        const dateComplete = +dateTimeComplete || null;
+        console.log({name, tagsArray, description, category, dateStart, dateComplete, isComplete});
+        this.props.addNewTask({name, tagsArray, description, category, dateStart, dateComplete, isComplete});
         this.setState({showAddDialog: false});
       }
     }

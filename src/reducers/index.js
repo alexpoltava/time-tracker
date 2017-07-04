@@ -10,7 +10,7 @@ import { LOGIN_REQUEST,
           RESTORE_AUTH
       } from '../actions';
 
-import timer from './timer';
+import timers from './timer';
 import { task, tasks } from './task';
 
 const session = (state = {
@@ -73,7 +73,7 @@ const session = (state = {
 
 
 export default combineReducers({
-    timer,
+    timers,
     task,
     tasks,
     session
