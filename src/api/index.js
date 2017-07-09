@@ -37,9 +37,9 @@ const dbTaskRemove = (key) => {
 
 const logout = () => firebaseAuth().signOut();
 
-const login = (email, pw) => {
+const login = (payload) => {
+    const { email, pw } = payload;
     const credential = firebaseAuth.EmailAuthProvider.credential(email, pw);
-    session.saveSession(credential);
     return firebaseAuth().signInWithCredential(credential);
 };
 
@@ -54,9 +54,9 @@ const saveUser = (user) => {
     return dbWriteUserData(user.email, user.uid, false);
 };
 
-const register = (email, pw) => {
+const register = (payload) => {
+    const { email, pw } = payload;
     const credential = firebaseAuth.EmailAuthProvider.credential(email, pw);
-    session.saveSession(credential);
     return firebaseAuth().createUserWithEmailAndPassword(email, pw);
 };
 

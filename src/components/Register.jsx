@@ -1,29 +1,35 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import CircularProgress from 'material-ui/CircularProgress';
 
+
 import api from '../api';
 
 import styles from './LoginRegister.less';
 
-export default class Register extends Component {
-  constructor(props) {
-    super(props);
+import { register } from '../actions';
 
-    this.state = {
-      email: '',
-      password: '',
-      password2: '',
-      isEmailValid: true,
-      isPasswordValid: true,
-      isPassword2Valid: true,
-      registrationInProgress: false,
-      errorMessage: '',
-      isRegisterSuccess: false
+const mapStateToProps = state => ({
+    isRegistering: state.register.isRegistering,
+    isLoggedIn: state.session.isLoggedIn,
+    registrationSuccess: state.register.registrationSuccess,
+    error: state.register.error
+});
+
+@connect(mapStateToProps, { register } )
+export default class Register extends Component {
+    state = {
+        email: '',
+        password: '',
+        password2: '',
+        isEmailValid: true,
+        isPasswordValid: true,
+        isPassword2Valid: true,
+        validationError: '',
     };
-  }
 
   validateInput = () => {
     let isInputValid = true;
@@ -36,7 +42,7 @@ export default class Register extends Component {
         isInputValid = false;
     }
     if (this.state.password2 === '') {
-        this.setState({ isPasswor2dValid: false });
+        this.setState({ isPassword2Valid: false });
         isInputValid = false;
     }
     return isInputValid;
@@ -46,7 +52,7 @@ export default class Register extends Component {
     this.setState({
       email: event.target.value,
       isEmailValid: true,
-      errorMessage: ''
+      validationError: ''
     });
   };
 
@@ -54,7 +60,7 @@ export default class Register extends Component {
     this.setState({
       password: event.target.value,
       isPasswordValid: true,
-      errorMessage: ''
+      validationError: ''
     });
   };
 
@@ -62,7 +68,7 @@ export default class Register extends Component {
     this.setState({
       password2: event.target.value,
       isPassword2Valid: true,
-      errorMessage: ''
+      validationError: ''
     });
   };
 
@@ -72,28 +78,10 @@ export default class Register extends Component {
     if (this.validateInput() === true){
         if(!this.comparePasswords()) {
           return this.setState({
-            registrationInProgress: false,
-            isRegisterSuccess: false,
-            errorMessage: 'Passwords should be the same'
+            validationError: 'Passwords should be the same'
           });
         }
-        this.setState({
-          registrationInProgress: true
-        }, () => (
-          api.register(this.state.email, this.state.password)
-            .then(user => (
-                api.saveUser(user)
-            ))
-            .catch(error => {
-              return this.setState({
-                registrationInProgress: false,
-                isRegisterSuccess: false,
-                errorMessage: error.message
-              });
-              }
-            )
-          )
-        )
+        this.props.register(this.state.email, this.state.password);
       }
   }
 
@@ -105,7 +93,7 @@ export default class Register extends Component {
           <TextField
               className={styles.inputStyle}
               hintText="e-mail"
-              disabled={this.state.isRegisterSuccess}
+              disabled={this.props.registrationSuccess || this.props.isLoggedIn}
               errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
               name="Email"
               value={this.state.email}
@@ -114,7 +102,7 @@ export default class Register extends Component {
           <TextField
               className={styles.inputStyle}
               hintText="password"
-              disabled={this.state.isRegisterSuccess}
+              disabled={this.props.registrationSuccess || this.props.isLoggedIn}
               errorText={this.state.isPasswordValid ? '' : 'password is required'}
               name="Password"
               type="password"
@@ -124,7 +112,7 @@ export default class Register extends Component {
           <TextField
               className={styles.inputStyle}
               hintText="confirm password"
-              disabled={this.state.isRegisterSuccess}
+              disabled={this.props.registrationSuccess || this.props.isLoggedIn}
               errorText={this.state.isPassword2Valid ? '' : 'password is required'}
               name="Password2"
               type="password"
@@ -134,23 +122,23 @@ export default class Register extends Component {
           <span
               className={styles.inputStyle}
               style={{
-                        color:`${this.state.isRegisterSuccess === true ? "green" : "red"}`,
-                        display: `${this.state.errorMessage === '' ? 'none': 'block'}`,
+                        color:`${this.props.registrationSuccess === true ? "green" : "red"}`,
+                        display: `${!this.state.validationError && !this.props.error ? 'none': 'block'}`,
                         fontSize: 'small',
                         textAlign: 'left'
                       }}
           >
-            {this.state.errorMessage}
+            {`${this.state.validationError} ${this.props.error}`}
           </span>
           {
-            this.state.registrationInProgress === true
+            this.props.isRegistering === true
             ? <CircularProgress />
             : <FlatButton
                 className={styles.btnRegister}
                 label="Register"
                 primary={true}
                 style={{margin: '16px'}}
-                disabled={this.state.isRegisterSuccess}
+                disabled={this.props.registrationSuccess || this.props.isLoggedIn}
                 onTouchTap={this.handleRegister}
               />
           }

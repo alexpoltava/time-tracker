@@ -13,14 +13,14 @@ import { LOGIN_REQUEST,
          LOGIN_WITH_GOOGLE_FAILURE } from '../actions';
 
 
-export function* auth(user, password) {
+export function* auth(payload) {
     try {
-        yield call(api.login, user, password);
+        yield call(api.login, payload);
     } catch (error) {
-        yield put({ type: LOGIN_FAILURE, error });
+        yield put({ type: LOGIN_FAILURE, error: error.message });
     } finally {
         if (yield cancelled()) {
-            yield put({ type: LOGIN_FAILURE, error: new Error('cancelled') });
+            yield put({ type: LOGIN_FAILURE, error: 'cancelled' });
         }
     }
 }
@@ -31,12 +31,11 @@ export function* authWithGoogleAccount() {
         if (api.isUserExist) {
             yield call(api.saveUser, result.user);
         }
-        yield call(session.saveSession, result.credential);
     } catch (error) {
-        yield put({ type: LOGIN_WITH_GOOGLE_FAILURE, error });
+        yield put({ type: LOGIN_WITH_GOOGLE_FAILURE, error: error.message });
     } finally {
         if (yield cancelled()) {
-            yield put({ type: LOGIN_WITH_GOOGLE_FAILURE, error: new Error('cancelled') });
+            yield put({ type: LOGIN_WITH_GOOGLE_FAILURE, error: 'cancelled' });
         }
     }
 }
@@ -44,16 +43,19 @@ export function* authWithGoogleAccount() {
 export function* restoreAuth() {
     const credential = yield call(session.extractSession);
     if (credential) {
-        console.log('we have saved credential');
-        switch (credential.providerId) {
-            case 'google.com':
-                yield call(api.signInWithGoogleCredential, credential);
-                break;
-            case 'password':
-                yield call(api.signInWithCredential, credential);
-                break;
-            default:
-        }
+        try {
+            switch (credential.providerId) {
+                case 'google.com':
+                    yield call(api.signInWithGoogleCredential, credential);
+                    break;
+                case 'password':
+                    yield call(api.signInWithCredential, credential);
+                    break;
+                default:
+            }
+      } catch (error) {
+          yield put({ type: LOGIN_FAILURE, error: error.message });
+      }
     }
 }
 
@@ -64,11 +66,9 @@ export function* loginFlow() {
         let task = null;
         if (loginAction.type === LOGIN_REQUEST) {
             const { payload } = loginAction;
-            task = yield fork(auth, payload.user, payload.password);
+            task = yield fork(auth, payload);
         } else if (loginAction.type === LOGIN_WITH_GOOGLE_REQUEST) {
             task = yield fork(authWithGoogleAccount);
-        } else {
-            console.log('LOGIN_SUCCESS');
         }
         const logoutAction = yield take([LOGOUT_REQUEST, LOGIN_FAILURE, LOGIN_WITH_GOOGLE_FAILURE]);
         if (logoutAction.type === LOGOUT_REQUEST) {
@@ -83,7 +83,7 @@ export function* loginFlow() {
 // Callbacks from  firebase
 export function* syncAuthState(user) {
     if (user) {
-        yield put({ type: LOGIN_SUCCESS, user });
+        yield put({ type: LOGIN_SUCCESS, payload: { user } });
         yield call(session.saveSession, user);
     } else {
         yield put({ type: LOGOUT_SUCCESS });

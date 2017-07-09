@@ -26,7 +26,7 @@ export default class Login extends Component {
         email: '',
         password: '',
         isEmailValid: true,
-        isPasswordValid: true,
+        isPasswordValid: true
       };
 
 
@@ -98,7 +98,7 @@ export default class Login extends Component {
                                 textAlign: 'left'
                               }}
                   >
-                    {this.props.error ? this.props.error.message : null}
+                    {this.props.error ? this.props.error : null}
                   </span>
                   {
                     this.props.isLoggingIn === true

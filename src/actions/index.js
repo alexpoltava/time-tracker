@@ -19,15 +19,21 @@ export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 
+export const REGISTER_REQUEST = 'REGISTER_REQUEST';
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+export const REGISTER_FAILURE = 'REGISTER_FAILURE';
+
 export const RESTORE_AUTH = 'RESTORE_AUTH';
 
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
+export const register = (email, password) => ({ type: REGISTER_REQUEST, payload: { email, pw: password } });
+
 export const logout = () => ({ type: LOGOUT_REQUEST });
 
-export const loginSuccess = user => ({ user, type: LOGIN_SUCCESS });
+export const loginSuccess = payload => ({ type: LOGIN_SUCCESS, payload });
 
-export const login = (user, password) => ({ type: LOGIN_REQUEST, payload: { user, password } });
+export const login = (email, password) => ({ type: LOGIN_REQUEST, payload: { email, pw: password } });
 
 export const loginWithGoogleAccount = () => ({ type: LOGIN_WITH_GOOGLE_REQUEST });
 
