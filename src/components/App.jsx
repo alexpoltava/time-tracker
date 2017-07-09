@@ -19,8 +19,6 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
 
 import Alert from './utils/alert.jsx';
 
-import api from '../api';
-import { ref } from '../config/constants';
 import styles from './App.less';
 
 const mapStateToProps = state => ({
@@ -43,36 +41,6 @@ class App extends Component {
 
     showAlert = () => {
       this.setState({ showAlert: true });
-    }
-
-    componentDidMount() {
-        this.removeListener = firebaseAuth().onAuthStateChanged((user) => {
-            if (user) {
-                this.props.loginSuccess(user);
-                const { history, location } = this.props;
-                history.push({
-                  pathname: location.state ? location.state.nextLocation.pathname : '/dashboard',
-                  search: location.state ? location.state.nextLocation.search : ''
-                });
-                user.emailVerified === false ? this.showAlert() : null;
-
-                ref.child(`users/${user.uid}/tasks`).on('child_added', (childSnapshot, prevChildKey) => {
-                    this.props.action('TIMER_ADD', { id: childSnapshot.key });
-                    this.props.taskAdded(childSnapshot.key, childSnapshot.val());
-                });
-                ref.child(`users/${user.uid}/tasks`).on('child_removed', (childSnapshot) => {
-                    this.props.taskRemoved(childSnapshot.key);
-                    this.props.action('TIMER_REMOVE', { id:  childSnapshot.key });
-                });
-
-
-            } else {
-                this.props.logoutSuccess();
-            }
-        });
-    }
-    componentWillUnmount() {
-        this.removeListener();
     }
 
     render() {

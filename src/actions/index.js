@@ -21,50 +21,15 @@ export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
 
 export const RESTORE_AUTH = 'RESTORE_AUTH';
 
-export const logoutSuccess = () => ({
-    type: LOGOUT_SUCCESS
-});
+export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
-export const logout = () => (dispatch) => {
-    session.clearSession();
-    dispatch({ type: LOGOUT_REQUEST });
-
-    return api.logout()
-        .catch(error => (dispatch({ error, type: LOGOUT_FAILURE })));
-};
+export const logout = () => ({ type: LOGOUT_REQUEST });
 
 export const loginSuccess = user => ({ user, type: LOGIN_SUCCESS });
 
-export const login = (email, password) => (dispatch) => {
-    dispatch({ type: LOGIN_REQUEST });
+export const login = (user, password) => ({ type: LOGIN_REQUEST, payload: { user, password } });
 
-    return api.login(email, password)
-            .catch(error => (dispatch({ error, type: LOGIN_FAILURE })));
-};
-
-export const loginWithGoogleAccount = () => (dispatch) => {
-    dispatch({ type: LOGIN_WITH_GOOGLE_REQUEST });
-
-    return api.loginWithGoogleAccount()
-        .then((result) => {
-            if (api.isUserExist) api.saveUser(result.user);
-            session.saveSession(result.credential);
-        })
-        .catch(error => (dispatch({ error, type: LOGIN_WITH_GOOGLE_FAILURE })));
-};
-
-export const restoreAuth = credential => (dispatch) => {
-    dispatch({ type: RESTORE_AUTH });
-
-    switch (credential.providerId) {
-        case 'google.com':
-            return api.signInWithGoogleCredential(credential);
-        case 'password':
-            return api.signInWithCredential(credential);
-        default:
-    }
-};
-
+export const loginWithGoogleAccount = () => ({ type: LOGIN_WITH_GOOGLE_REQUEST });
 
 export const ADD_TASK = 'ADD_TASK';
 export const FETCH_REQUEST = 'FETCH_REQUEST';

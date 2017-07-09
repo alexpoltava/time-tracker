@@ -1,5 +1,6 @@
-import { takeLatest, take, call, put, cancelled, eventChannel, fork, cancel } from 'redux-saga/effects';
-import firebaseAuth from '../config/constants';
+import { take, call, put, cancelled, fork, cancel } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
+import { firebaseAuth } from '../config/constants';
 import api from '../api';
 import session from '../components/utils/session';
 
@@ -7,12 +8,13 @@ import { LOGIN_REQUEST,
          LOGIN_SUCCESS,
          LOGIN_FAILURE,
          LOGOUT_REQUEST,
-         LOGOUT_SUCCESS } from '../actions';
+         LOGOUT_SUCCESS,
+         LOGIN_WITH_GOOGLE_REQUEST,
+         LOGIN_WITH_GOOGLE_FAILURE } from '../actions';
 
 
-function* auth(user, password) {
+export function* auth(user, password) {
     try {
-        yield put({ type: LOGIN_REQUEST });
         yield call(api.login, user, password);
     } catch (error) {
         yield put({ type: LOGIN_FAILURE, error });
@@ -23,29 +25,73 @@ function* auth(user, password) {
     }
 }
 
-export function* loginFlow() {
-    while (true) {
-        const { user, password } = yield take(LOGIN_REQUEST);
-        const task = yield fork(auth, user, password);
-        const action = yield take([LOGOUT_REQUEST, LOGIN_FAILURE]);
-        if (action.type === LOGOUT_REQUEST) {
-            yield cancel(task);
+export function* authWithGoogleAccount() {
+    try {
+        const result = yield call(api.loginWithGoogleAccount);
+        if (api.isUserExist) {
+            yield call(api.saveUser, result.user);
         }
+        yield call(session.saveSession, result.credential);
+    } catch (error) {
+        yield put({ type: LOGIN_WITH_GOOGLE_FAILURE, error });
+    } finally {
+        if (yield cancelled()) {
+            yield put({ type: LOGIN_WITH_GOOGLE_FAILURE, error: new Error('cancelled') });
+        }
+    }
+}
+
+export function* restoreAuth() {
+    const credential = yield call(session.extractSession);
+    if (credential) {
+        console.log('we have saved credential');
+        switch (credential.providerId) {
+            case 'google.com':
+                yield call(api.signInWithGoogleCredential, credential);
+                break;
+            case 'password':
+                yield call(api.signInWithCredential, credential);
+                break;
+            default:
+        }
+    }
+}
+
+export function* loginFlow() {
+    yield call(restoreAuth);
+    while (true) {
+        const loginAction = yield take([LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_WITH_GOOGLE_REQUEST]);
+        let task = null;
+        if (loginAction.type === LOGIN_REQUEST) {
+            const { payload } = loginAction;
+            task = yield fork(auth, payload.user, payload.password);
+        } else if (loginAction.type === LOGIN_WITH_GOOGLE_REQUEST) {
+            task = yield fork(authWithGoogleAccount);
+        } else {
+            console.log('LOGIN_SUCCESS');
+        }
+        const logoutAction = yield take([LOGOUT_REQUEST, LOGIN_FAILURE, LOGIN_WITH_GOOGLE_FAILURE]);
+        if (logoutAction.type === LOGOUT_REQUEST) {
+            if (task) {
+                yield cancel(task);
+            }
+            yield call([session.clearSession, api.logout]);
+        }
+    }
+}
+
+// Callbacks from  firebase
+export function* syncAuthState(user) {
+    if (user) {
+        yield put({ type: LOGIN_SUCCESS, user });
+        yield call(session.saveSession, user);
+    } else {
+        yield put({ type: LOGOUT_SUCCESS });
         yield call(session.clearSession);
     }
 }
 
-function* syncAuthState(action) {
-    if (action.type === LOGIN_SUCCESS) {
-        yield put({ type: action.type, credentials: action.credentials });
-        yield call(session.saveSession, { credentials: action.credentials });
-    } else if (action.type === LOGOUT_SUCCESS) {
-        yield put({ type: action.type });
-        yield call(session.clearSession, { credentials: action.credentials });
-    }
-}
-
-export function* authSaga() {
+export function createAuthChannel() {
     const authListener = eventChannel((emit) => {
         const unsubscribe = firebaseAuth().onAuthStateChanged(
             user => emit({ user }),
@@ -53,11 +99,13 @@ export function* authSaga() {
         );
         return unsubscribe;
     });
-    try {
-        yield takeLatest(authListener, syncAuthState);
-    } finally {
-        if (yield cancelled()) {
-            authListener.close();
-        }
+    return authListener;
+}
+
+export function* updatedAuthState() {
+    const authStateListener = createAuthChannel();
+    while (true) {
+        const { user, error } = yield take(authStateListener);
+        yield call(syncAuthState, user);
     }
 }

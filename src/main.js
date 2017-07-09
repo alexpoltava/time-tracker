@@ -58,18 +58,7 @@ const renderApp = () => {
 };
 
 const startApp = () => {
-    const credential = session.extractSession();
-    if (credential) {
-        store.dispatch(restoreAuth(credential))
-        .then(() => renderApp())
-        .catch((error) => {
-            console.log(error.message);
-            session.clearSession();
-            renderApp();
-        });
-    } else {
-        renderApp();
-    }
+    renderApp();
 };
 
 startApp();
