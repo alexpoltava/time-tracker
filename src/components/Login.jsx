@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
@@ -15,6 +15,7 @@ const mapStateToProps = state => ({
     isLoggedIn: state.session.isLoggedIn,
     isLoggingIn: state.session.isLoggingIn,
     isLoggingWithGoogleIn: state.session.isLoggingWithGoogleIn,
+    uid: state.session.user.uid,
     error: state.session.error
 });
 
@@ -69,6 +70,10 @@ export default class Login extends Component {
     }
 
     render() {
+        const { from } = this.props.location.state || { from: { pathname: `/dashboard/${this.props.uid}` } };
+        if(this.props.isLoggedIn) {
+          return <Redirect to={from} />
+        }
         return (
             <div className={styles.componentStyle}>
                 <Paper className={styles.paperStyle}>

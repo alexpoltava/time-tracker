@@ -6,14 +6,12 @@ import { firebaseAuth } from '../config/constants';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
 
-import requireAuth from './hoc/requireAuth.jsx';
-
 import Dashboard from './protected/Dashboard.jsx';
 import Home from './Home.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
 
-import { action, loginSuccess, logout, logoutSuccess, taskAdded, taskRemoved } from '../actions';
+import { logout } from '../actions';
 import { withRouter } from 'react-router-dom';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
@@ -23,13 +21,26 @@ import styles from './App.less';
 
 const mapStateToProps = state => ({
     isLoggedIn: state.session.isLoggedIn,
-    isLoggedOut: state.session.isLoggedOut,
     isLoggingOut: state.session.isLoggingOut,
+    uid: state.session.user.uid,
     user: state.session.user
 });
 
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  return <Route {...rest} render={ props => {
+      return rest.auth ? (
+          <Component {...props}/>
+        ) : (
+          <Redirect to={{
+            pathname: '/login',
+            state: { from: props.location }
+          }}/>
+      );
+  }} />
+}
+
 @withRouter
-@connect(mapStateToProps, { action, loginSuccess, logout, logoutSuccess, taskAdded, taskRemoved })
+@connect(mapStateToProps, { logout })
 class App extends Component {
     state ={
       showAlert: false,
@@ -51,7 +62,7 @@ class App extends Component {
                   <NavLink exact to={'/'} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Home</NavLink>{' | '}
                   {
                     this.props.isLoggedIn === true
-                    ? <NavLink to={'/dashboard'} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Dashboard</NavLink>
+                    ? <NavLink to={`/dashboard/${this.props.uid}`} style={{textDecoration:'none', color: this.props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Dashboard</NavLink>
                     : null
                   }
                 </div>
@@ -75,18 +86,17 @@ class App extends Component {
                     </div>
                 }
               </div>
-              <hr />
-              <div className={styles.content}>
-                <Route exact path="/" component={Home} />
-                <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-                <Route path="/dashboard" component={requireAuth(Dashboard)} />
-                <Alert
-                  open={this.state.showAlert}
-                  closeDialog={this.closeAlert}
-                >
-                  email has been sent to {this.props.user.email}. Check it to complete registration.
-                </Alert>
+                <div className={styles.content}>
+                  <Route exact path="/" component={Home} />
+                  <Route path="/login" component={Login} />
+                  <Route path="/register" component={Register} />
+                  <PrivateRoute path="/dashboard/:uid" auth={this.props.isLoggedIn} component={Dashboard} />
+                  <Alert
+                    open={this.state.showAlert}
+                    closeDialog={this.closeAlert}
+                  >
+                    email has been sent to {this.props.user.email}. Check it to complete registration.
+                  </Alert>
               </div>
             </div>
         );

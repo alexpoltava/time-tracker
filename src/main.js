@@ -14,10 +14,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import configureStore from './store';
 
-import { restoreAuth } from './actions';
 import App from './components/App.jsx';
-
-import session from './components/utils/session';
 
 // styles
 import 'normalize.css';
@@ -57,8 +54,4 @@ const renderApp = () => {
   document.getElementById('root'));
 };
 
-const startApp = () => {
-    renderApp();
-};
-
-startApp();
+renderApp();

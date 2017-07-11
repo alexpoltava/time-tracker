@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect, withRouter } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
@@ -16,9 +17,11 @@ const mapStateToProps = state => ({
     isRegistering: state.register.isRegistering,
     isLoggedIn: state.session.isLoggedIn,
     registrationSuccess: state.register.registrationSuccess,
+    uid: state.session.user.uid,
     error: state.register.error
 });
 
+@withRouter
 @connect(mapStateToProps, { register } )
 export default class Register extends Component {
     state = {
@@ -86,6 +89,11 @@ export default class Register extends Component {
   }
 
   render () {
+    const { from } = this.props.location.state || { from: { pathname: `/dashboard/${this.props.uid}` } };
+    if(this.props.isLoggedIn) {
+      return <Redirect to={from} />
+    }
+
     return (
       <div className={styles.componentStyle}>
         <Paper className={styles.paperStyle}>

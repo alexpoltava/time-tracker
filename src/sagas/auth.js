@@ -53,9 +53,9 @@ export function* restoreAuth() {
                     break;
                 default:
             }
-      } catch (error) {
-          yield put({ type: LOGIN_FAILURE, error: error.message });
-      }
+        } catch (error) {
+            yield put({ type: LOGIN_FAILURE, error: error.message });
+        }
     }
 }
 
