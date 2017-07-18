@@ -3,6 +3,7 @@ import { delay } from 'redux-saga';
 
 function* handleStart(action) {
     // eslint-disable-next-line no-constant-condition
+    console.log(action);
     while (true) {
         const { stop, remove } = yield race({
             stop: take('STOP'),
@@ -10,11 +11,11 @@ function* handleStart(action) {
             tick: call(delay, 1000),
         });
         if (stop) {
-            if (action.id === stop.id) { break; }
+            if (action.payload.id === stop.id) { break; }
         } else if (remove) {
-            if (action.id === remove.key) { break; }
+            if (action.payload.id === remove.key) { break; }
         } else {
-            yield put({ type: 'TICK', id: action.id, now: Date.now() });
+            yield put({ type: 'TICK', payload: { id: action.payload.id, now: Date.now() } });
         }
     }
 }

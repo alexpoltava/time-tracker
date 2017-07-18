@@ -10,7 +10,7 @@ import SelectField from 'material-ui/SelectField';
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 
-import { addNewTask } from '../actions';
+import { addTask } from '../actions';
 
 import styles from './AddTask.less';
 
@@ -24,7 +24,7 @@ const tempCategories = [
 const mapStateToProps = (state) => ({
 });
 
-@connect(mapStateToProps, { addNewTask })
+@connect(mapStateToProps, { addTask })
 class AddTask extends Component {
     state = {
       showAddDialog: false,
@@ -128,8 +128,7 @@ class AddTask extends Component {
         const tagsArray = this.tagsStringToArray(tagsString);
         const dateStart = +dateTimeStart;
         const dateComplete = +dateTimeComplete || null;
-        console.log({name, tagsArray, description, category, dateStart, dateComplete, isComplete});
-        this.props.addNewTask({name, tagsArray, description, category, dateStart, dateComplete, isComplete});
+        this.props.addTask({name, tagsArray, description, category, dateStart, dateComplete, isComplete});
         this.setState({showAddDialog: false});
       }
     }

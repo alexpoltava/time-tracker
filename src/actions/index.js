@@ -1,12 +1,4 @@
-import api from '../api';
-import session from '../components/utils/session';
-
-export const action = (type, params = {}) => (
-    {
-        type,
-        ...params
-    }
-);
+export const action = (type, params = {}) => ({ type, payload: { ...params } });
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -23,6 +15,18 @@ export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAILURE = 'REGISTER_FAILURE';
 
+export const START_DB_LISTENER = 'START_DB_LISTENER';
+export const STOP_DB_LISTENER = 'STOP_DB_LISTENER';
+
+export const ADD_TASK = 'ADD_TASK';
+export const REMOVE_TASK = 'REMOVE_TASK';
+export const TASK_ADDED = 'TASK_ADDED';
+export const TASK_REMOVED = 'TASK_REMOVED';
+
+export const FETCH_REQUEST = 'FETCH_REQUEST';
+export const FETCH_SUCCESS = 'FETCH_SUCCESS';
+export const FETCH_FAILURE = 'FETCH_FAILURE';
+
 export const RESTORE_AUTH = 'RESTORE_AUTH';
 
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
@@ -37,35 +41,6 @@ export const login = (email, password) => ({ type: LOGIN_REQUEST, payload: { ema
 
 export const loginWithGoogleAccount = () => ({ type: LOGIN_WITH_GOOGLE_REQUEST });
 
-export const ADD_TASK = 'ADD_TASK';
-export const FETCH_REQUEST = 'FETCH_REQUEST';
-export const FETCH_SUCCESS = 'FETCH_SUCCESS';
-export const FETCH_FAILURE = 'FETCH_FAILURE';
+export const addTask = payload => ({ type: ADD_TASK, payload });
 
-export const TASK_ADDED = 'TASK_ADDED';
-export const TASK_REMOVED = 'TASK_REMOVED';
-
-export const addNewTask = payload => (dispatch) => {
-    dispatch({ type: ADD_TASK });
-    return api.dbAddNewTask(payload);
-};
-
-export const fetchTasksList = () => (dispatch) => {
-    dispatch({ type: FETCH_REQUEST });
-    return api.dbFetchTasks()
-        .then(snap => (dispatch({ type: FETCH_SUCCESS, list: snap.val() })))
-        .catch(error => (dispatch({ type: FETCH_FAILURE, error })));
-};
-
-export const taskRemove = key => () => api.dbTaskRemove(key);
-
-export const taskAdded = (key, payload) => ({
-    type: TASK_ADDED,
-    key,
-    payload
-});
-
-export const taskRemoved = key => ({
-    type: TASK_REMOVED,
-    key
-});
+export const removeTask = key => ({ type: REMOVE_TASK, payload: { id: key } });

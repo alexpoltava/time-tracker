@@ -89,69 +89,69 @@ export default class Register extends Component {
   }
 
   render () {
-    const { from } = this.props.location.state || { from: { pathname: `/dashboard/${this.props.uid}` } };
-    if(this.props.isLoggedIn) {
-      return <Redirect to={from} />
-    }
+      const { from } = this.props.location.state || { from: { pathname: `/dashboard/${this.props.uid}` } };
+      if(this.props.isLoggedIn) {
+        return <Redirect to={from} />
+      }
 
-    return (
-      <div className={styles.componentStyle}>
-        <Paper className={styles.paperStyle}>
-          <span className={styles.inputStyle}>Register using e-mail</span>
-          <TextField
-              className={styles.inputStyle}
-              hintText="e-mail"
-              disabled={this.props.registrationSuccess || this.props.isLoggedIn}
-              errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
-              name="Email"
-              value={this.state.email}
-              onChange={this.handleEmailChange}
-          />
-          <TextField
-              className={styles.inputStyle}
-              hintText="password"
-              disabled={this.props.registrationSuccess || this.props.isLoggedIn}
-              errorText={this.state.isPasswordValid ? '' : 'password is required'}
-              name="Password"
-              type="password"
-              value={this.state.password}
-              onChange={this.handlePaswordChange}
-          />
-          <TextField
-              className={styles.inputStyle}
-              hintText="confirm password"
-              disabled={this.props.registrationSuccess || this.props.isLoggedIn}
-              errorText={this.state.isPassword2Valid ? '' : 'password is required'}
-              name="Password2"
-              type="password"
-              value={this.state.password2}
-              onChange={this.handlePasword2Change}
-          />
-          <span
-              className={styles.inputStyle}
-              style={{
-                        color:`${this.props.registrationSuccess === true ? "green" : "red"}`,
-                        display: `${!this.state.validationError && !this.props.error ? 'none': 'block'}`,
-                        fontSize: 'small',
-                        textAlign: 'left'
-                      }}
-          >
-            {`${this.state.validationError} ${this.props.error}`}
-          </span>
-          {
-            this.props.isRegistering === true
-            ? <CircularProgress />
-            : <FlatButton
-                className={styles.btnRegister}
-                label="Register"
-                primary={true}
-                style={{margin: '16px'}}
+      return (
+        <div className={styles.componentStyle}>
+          <Paper className={styles.paperStyle}>
+            <span className={styles.inputStyle}>Register using e-mail</span>
+            <TextField
+                className={styles.inputStyle}
+                hintText="e-mail"
                 disabled={this.props.registrationSuccess || this.props.isLoggedIn}
-                onTouchTap={this.handleRegister}
-              />
-          }
-        </Paper>
-      </div>
-    )
-  }
+                errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
+                name="Email"
+                value={this.state.email}
+                onChange={this.handleEmailChange}
+            />
+            <TextField
+                className={styles.inputStyle}
+                hintText="password"
+                disabled={this.props.registrationSuccess || this.props.isLoggedIn}
+                errorText={this.state.isPasswordValid ? '' : 'password is required'}
+                name="Password"
+                type="password"
+                value={this.state.password}
+                onChange={this.handlePaswordChange}
+            />
+            <TextField
+                className={styles.inputStyle}
+                hintText="confirm password"
+                disabled={this.props.registrationSuccess || this.props.isLoggedIn}
+                errorText={this.state.isPassword2Valid ? '' : 'password is required'}
+                name="Password2"
+                type="password"
+                value={this.state.password2}
+                onChange={this.handlePasword2Change}
+            />
+            <span
+                className={styles.inputStyle}
+                style={{
+                          color:`${this.props.registrationSuccess === true ? "green" : "red"}`,
+                          display: `${!this.state.validationError && !this.props.error ? 'none': 'block'}`,
+                          fontSize: 'small',
+                          textAlign: 'left'
+                        }}
+            >
+              {`${this.state.validationError} ${this.props.error}`}
+            </span>
+            {
+              this.props.isRegistering === true
+              ? <CircularProgress />
+              : <FlatButton
+                  className={styles.btnRegister}
+                  label="Register"
+                  primary={true}
+                  style={{margin: '16px'}}
+                  disabled={this.props.registrationSuccess || this.props.isLoggedIn}
+                  onTouchTap={this.handleRegister}
+                />
+            }
+          </Paper>
+        </div>
+      );
+    }
 }

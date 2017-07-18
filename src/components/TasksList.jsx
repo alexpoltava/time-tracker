@@ -5,7 +5,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import Task from './Task.jsx';
 
 import { action } from '../actions';
-import { taskRemove } from '../actions';
+import { removeTask } from '../actions';
 
 const mapStateToProps = state => ({
     list: state.tasks.list,
@@ -14,7 +14,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-        taskRemove: (key) => dispatch(taskRemove(key)),
+        removeTask: (key) => dispatch(removeTask(key)),
         start: (id) => dispatch(action('START', {id})),
         stop: (id) => dispatch(action('STOP', {id})),
         reset: (id) => dispatch(action('RESET', {id}))
@@ -23,11 +23,11 @@ const mapDispatchToProps = dispatch => ({
 @connect(mapStateToProps, mapDispatchToProps)
 export default class TaskList extends Component {
     onDelete = (key) => {
-      this.props.taskRemove(key);
+      this.props.removeTask(key);
     }
 
     render() {
-      const { list, filter, isFetching } = this.props;
+      const { list, filter, isFetching, timers } = this.props;
         return (
           <div>
             {
@@ -41,8 +41,8 @@ export default class TaskList extends Component {
                     description={list[key].description}
                     dateStart={list[key].dateStart || 0}
                     dateComplete={list[key].dateComplete || 0}
-                    time={this.props.timers.find(timer => (timer.id === key)).time}
-                    status={this.props.timers.find(timer => (timer.id === key)).status}
+                    time={timers.find(timer => (timer.id === key)).time}
+                    status={timers.find(timer => (timer.id === key)).status}
                     start={this.props.start}
                     stop={this.props.stop}
                     reset={this.props.reset}

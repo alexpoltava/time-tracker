@@ -1,4 +1,5 @@
 import { ADD_TASK,
+          REMOVE_TASK,
           FETCH_REQUEST,
           FETCH_SUCCESS,
           FETCH_FAILURE,
@@ -29,13 +30,13 @@ export const tasks = (state = { isFetching: false, list: {}, error: null }, acti
         case TASK_ADDED: {
             return {
                 ...state,
-                list: Object.assign({}, state.list, { [action.key]: action.payload })
+                list: Object.assign({}, state.list, { [action.payload.key]: action.payload.val })
             };
         }
 
         case TASK_REMOVED: {
             const newList = Object.assign({}, state.list);
-            delete newList[action.key];
+            delete newList[action.payload.key];
             return {
                 ...state,
                 list: newList
@@ -55,7 +56,7 @@ export const task = (state = {}, action) => {
             };
         }
 
-        case 'REMOVE_TASK': {
+        case REMOVE_TASK: {
             return {
                 ...state
             };

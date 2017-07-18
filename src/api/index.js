@@ -17,7 +17,6 @@ const dbAddNewTask = (payload) => {
     const uid = firebaseAuth().currentUser.uid;
     const tasks = ref.child(`users/${uid}/tasks`);
     const newTask = tasks.push();
-    console.log({ id: newTask.key, ...payload });
     newTask.set({ id: newTask.key, ...payload });
 };
 

@@ -3,7 +3,7 @@ const timer = (state = { status: 'STOPPED', time: 0 }, action) => {
         case 'TIMER_ADD': {
             return {
                 ...state,
-                id: action.id
+                id: action.payload.id
             };
         }
         case 'START': {
@@ -47,14 +47,14 @@ const timers = (state = [], action) => {
         }
 
         case 'TIMER_REMOVE': {
-            return state.filter(el => (el.id !== action.id));
+            return state.filter(el => (el.id !== action.payload.id));
         }
 
         case 'START':
         case 'STOP':
         case 'TICK':
         case 'RESET': {
-            return state.map(el => ((el.id === action.id) ? timer(el, action) : el));
+            return state.map(el => ((el.id === action.payload.id) ? timer(el, action) : el));
         }
 
         default: {

@@ -6,7 +6,9 @@ import { LOGIN_REQUEST,
           LOGOUT_REQUEST,
           LOGOUT_SUCCESS,
           LOGOUT_FAILURE,
-          RESTORE_AUTH
+          RESTORE_AUTH,
+          START_DB_LISTENER,
+          STOP_DB_LISTENER
       } from '../actions';
 
 const session = (state = {
@@ -15,7 +17,8 @@ const session = (state = {
     isLoggedIn: false,
     isLoggingOut: false,
     error: null,
-    user: {}
+    user: {},
+    dbSyncTask: null
 }, action) => {
     switch (action.type) {
         case LOGIN_REQUEST:
@@ -61,6 +64,16 @@ const session = (state = {
                 isLoggingOut: false,
                 isLoggedIn: false,
                 user: {},
+            };
+        case START_DB_LISTENER:
+            return {
+                ...state,
+                dbSyncTask: action.payload.dbSyncTask
+            };
+        case STOP_DB_LISTENER:
+            return {
+                ...state,
+                dbSyncTask: null
             };
         case RESTORE_AUTH:
             return state;

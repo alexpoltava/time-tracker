@@ -1,16 +1,21 @@
-import { take, call, put, cancelled, fork, cancel } from 'redux-saga/effects';
+import { take, call, put, cancelled, fork, cancel, select } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { firebaseAuth } from '../config/constants';
 import api from '../api';
 import session from '../components/utils/session';
+
+import { updatedDbState } from './database';
 
 import { LOGIN_REQUEST,
          LOGIN_SUCCESS,
          LOGIN_FAILURE,
          LOGOUT_REQUEST,
          LOGOUT_SUCCESS,
+         LOGOUT_FAILURE,
          LOGIN_WITH_GOOGLE_REQUEST,
-         LOGIN_WITH_GOOGLE_FAILURE } from '../actions';
+         LOGIN_WITH_GOOGLE_FAILURE,
+         START_DB_LISTENER,
+         STOP_DB_LISTENER } from '../actions';
 
 
 export function* auth(payload) {
@@ -75,7 +80,17 @@ export function* loginFlow() {
             if (task) {
                 yield cancel(task);
             }
-            yield call([session.clearSession, api.logout]);
+            const getDBSyncTask = state => state.session.dbSyncTask;
+            const dbSyncTask = yield select(getDBSyncTask);
+            if (dbSyncTask.isRunning()) {
+                yield cancel(dbSyncTask);
+                yield put({ type: STOP_DB_LISTENER });
+            }
+            try {
+                yield call([session.clearSession, api.logout]);
+            } catch (error) {
+                yield put({ type: LOGOUT_FAILURE, error: error.message });
+            }
         }
     }
 }
@@ -84,6 +99,8 @@ export function* loginFlow() {
 export function* syncAuthState(user) {
     if (user) {
         yield put({ type: LOGIN_SUCCESS, payload: { user } });
+        const dbSyncTask = yield fork(updatedDbState, user.uid);
+        yield put({ type: START_DB_LISTENER, payload: { dbSyncTask } });
         yield call(session.saveSession, user);
     } else {
         yield put({ type: LOGOUT_SUCCESS });
