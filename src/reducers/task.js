@@ -1,10 +1,12 @@
-import { ADD_TASK,
+import {  ADD_TASK,
           REMOVE_TASK,
+          UPDATE_TASK,
           FETCH_REQUEST,
           FETCH_SUCCESS,
           FETCH_FAILURE,
           TASK_ADDED,
-          TASK_REMOVED
+          TASK_REMOVED,
+          TASK_UPDATED,
          } from '../actions';
 
 export const tasks = (state = { isFetching: false, list: {}, error: null }, action) => {
@@ -34,6 +36,13 @@ export const tasks = (state = { isFetching: false, list: {}, error: null }, acti
             };
         }
 
+        case TASK_UPDATED: {
+            return {
+                ...state,
+                list: Object.assign({}, state.list, { [action.payload.key]: action.payload.val })
+            };
+        }
+
         case TASK_REMOVED: {
             const newList = Object.assign({}, state.list);
             delete newList[action.payload.key];
@@ -57,6 +66,12 @@ export const task = (state = {}, action) => {
         }
 
         case REMOVE_TASK: {
+            return {
+                ...state
+            };
+        }
+
+        case UPDATE_TASK: {
             return {
                 ...state
             };

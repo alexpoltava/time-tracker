@@ -10,14 +10,15 @@ import { removeTask } from '../actions';
 const mapStateToProps = state => ({
     list: state.tasks.list,
     isFetching: state.tasks.isFetching,
-    timers: state.timers
+    timers: state.timers,
 });
 
 const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
         start: (id) => dispatch(action('START', {id})),
         stop: (id) => dispatch(action('STOP', {id})),
-        reset: (id) => dispatch(action('RESET', {id}))
+        reset: (id) => dispatch(action('RESET', {id})),
+        onUpdate: (id, params) =>  dispatch(action('UPDATE_TASK', { key: id, ...params })),
     });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -47,6 +48,8 @@ export default class TaskList extends Component {
                     stop={this.props.stop}
                     reset={this.props.reset}
                     onDelete={this.onDelete}
+                    onUpdate={this.props.onUpdate}
+                    isDone={list[key].isDone}
                   />
                 )
               : <CircularProgress />

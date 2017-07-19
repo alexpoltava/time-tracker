@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
+import Checkbox from 'material-ui/Checkbox';
 import Paper from 'material-ui/Paper';
 import duration from './utils/duration';
 
@@ -10,7 +11,8 @@ import style from './Task.less';
 
 export default class Task extends Component {
     state = {
-      isHovered: false
+      isHovered: false,
+      isDone: false,
     }
 
     handleDelete = () => {
@@ -36,6 +38,14 @@ export default class Task extends Component {
       this.props.reset(this.props.id);
     }
 
+    handleUpdate = () => {
+      this.props.onUpdate(this.props.id, { isDone: this.state.isDone });
+    }
+
+    handleDone = (e, isInputChecked) => {
+      this.setState({ isDone: isInputChecked }, this.handleUpdate);
+    }
+
     render() {
       const paperStyle = {
         height: '64px',
@@ -45,6 +55,10 @@ export default class Task extends Component {
         justifyContent: 'space-around',
         alignItems: 'center',
       };
+      const checkbox = {
+        display: 'flex',
+        alignSelf: 'center'
+      }
       const deleteStyle = {
         opacity: '1',
         transition: 'opacity 1s linear 0.5s'
@@ -88,6 +102,12 @@ export default class Task extends Component {
                       >
                         pause
                       </IconButton>
+                      <Checkbox
+                          label="Done"
+                          style={checkbox}
+                          checked={this.props.isDone}
+                          onCheck={this.handleDone}
+                      />
                       <IconButton
                           iconClassName="material-icons"
                           className='delete'

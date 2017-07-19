@@ -20,8 +20,10 @@ export const STOP_DB_LISTENER = 'STOP_DB_LISTENER';
 
 export const ADD_TASK = 'ADD_TASK';
 export const REMOVE_TASK = 'REMOVE_TASK';
+export const UPDATE_TASK = 'UPDATE_TASK';
 export const TASK_ADDED = 'TASK_ADDED';
 export const TASK_REMOVED = 'TASK_REMOVED';
+export const TASK_UPDATED = 'TASK_UPDATED';
 
 export const FETCH_REQUEST = 'FETCH_REQUEST';
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';

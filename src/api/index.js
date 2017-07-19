@@ -20,6 +20,12 @@ const dbAddNewTask = (payload) => {
     newTask.set({ id: newTask.key, ...payload });
 };
 
+const dbUpdateTask = (payload) => {
+    const uid = firebaseAuth().currentUser.uid;
+    const task = ref.child(`users/${uid}/tasks/${payload.key}`);
+    task.update(payload);
+};
+
 const dbFetchTasks = () => {
     const uid = firebaseAuth().currentUser.uid;
     const tasks = ref.child(`users/${uid}/tasks`);
@@ -87,6 +93,7 @@ export default {
     signInWithCredential,
     isUserExist,
     dbAddNewTask,
+    dbUpdateTask,
     dbFetchTasks,
-    dbTaskRemove
+    dbTaskRemove,
 };

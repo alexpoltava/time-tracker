@@ -7,12 +7,27 @@ import api from '../api';
 import { ADD_TASK,
           REMOVE_TASK,
           TASK_ADDED,
-          TASK_REMOVED } from '../actions';
+          TASK_REMOVED,
+          UPDATE_TASK,
+          TASK_UPDATED,
+        } from '../actions';
 
 
 function* addTask(action) {
     try {
         yield call(api.dbAddNewTask, action.payload);
+    } catch (error) {
+
+    }
+}
+
+function* waitUpdateTask() {
+    yield takeEvery(UPDATE_TASK, updateTask);
+}
+
+function* updateTask(action) {
+    try {
+        yield call(api.dbUpdateTask, action.payload);
     } catch (error) {
 
     }
@@ -38,16 +53,26 @@ function* waitRemoveTask() {
 export function* processOperations() {
     yield fork(waitAddTask);
     yield fork(waitRemoveTask);
+    yield fork(waitUpdateTask);
 }
 
 // Callbacks from  firebase
-export function* syncDbState(key, val) {
-    if (val) {
+export function* syncDbState(type, key, val) {
+    switch (type){
+      case 'child_added': {
         yield put({ type: 'TIMER_ADD', payload: { id: key } });
         yield put({ type: TASK_ADDED, payload: { key, val } });
-    } else {
+        break;
+      }
+      case 'child_removed': {
         yield put({ type: 'TIMER_REMOVE', payload: { id: key } });
         yield put({ type: TASK_REMOVED, payload: { key } });
+        break;
+      }
+      case 'child_changed': {
+        yield put({ type: TASK_UPDATED, payload: { key, val } });
+      }
+      default:
     }
 }
 
@@ -56,12 +81,17 @@ export function createDbChannel(uid) {
         ref.child(`users/${uid}/tasks/`)
         .on(
             'child_added',
-            childSnapshot => emit({ key: childSnapshot.key, val: childSnapshot.val() })
+            childSnapshot => emit({ type: 'child_added', key: childSnapshot.key, val: childSnapshot.val() })
         );
         ref.child(`users/${uid}/tasks/`)
         .on(
             'child_removed',
-            childSnapshot => emit({ key: childSnapshot.key })
+            childSnapshot => emit({ type: 'child_removed', key: childSnapshot.key })
+          );
+        ref.child(`users/${uid}/tasks/`)
+        .on(
+            'child_changed',
+            childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val()})
           );
         return () => ref.off(dbListener);
     });
@@ -71,7 +101,7 @@ export function createDbChannel(uid) {
 export function* updatedDbState(uid) {
     const dbStateListener = createDbChannel(uid);
     while (true) {
-        const { key, val } = yield take(dbStateListener);
-        yield call(syncDbState, key, val);
+        const { type, key, val } = yield take(dbStateListener);
+        yield call(syncDbState, type, key, val);
     }
 }
