@@ -158,6 +158,7 @@ class AddTask extends Component {
                     autoDetectWindowHeight
                     title="Add new Task"
                     modal={true}
+                    autoScrollBodyContent={true}
                     open={this.state.showAddDialog}
                 >
                   <TextField
@@ -216,7 +217,7 @@ class AddTask extends Component {
                   </div>
                   <Checkbox
                     label="Completed task"
-                    value={this.state.isComplete}
+                    checked={this.state.isComplete}
                     onCheck={this.handleCompleteChange}
                   />
                 <div style={{display: `${this.state.isComplete ? 'block' : 'none'}`}}>

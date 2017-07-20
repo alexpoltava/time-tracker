@@ -49,7 +49,7 @@ export default class TaskList extends Component {
                     reset={this.props.reset}
                     onDelete={this.onDelete}
                     onUpdate={this.props.onUpdate}
-                    isDone={list[key].isDone}
+                    isComplete={list[key].isComplete}
                   />
                 )
               : <CircularProgress />

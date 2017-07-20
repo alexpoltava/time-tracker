@@ -12,7 +12,7 @@ import style from './Task.less';
 export default class Task extends Component {
     state = {
       isHovered: false,
-      isDone: false,
+      isComplete: false,
     }
 
     handleDelete = () => {
@@ -39,11 +39,11 @@ export default class Task extends Component {
     }
 
     handleUpdate = () => {
-      this.props.onUpdate(this.props.id, { isDone: this.state.isDone });
+      this.props.onUpdate(this.props.id, { isComplete: this.state.isComplete });
     }
 
-    handleDone = (e, isInputChecked) => {
-      this.setState({ isDone: isInputChecked }, this.handleUpdate);
+    handleComplete = (e, isInputChecked) => {
+      this.setState({ isComplete: isInputChecked }, this.handleUpdate);
     }
 
     render() {
@@ -61,9 +61,9 @@ export default class Task extends Component {
       }
       const deleteStyle = {
         opacity: '1',
-        transition: 'opacity 1s linear 0.5s'
+        transition: 'opacity 1s linear 1s'
       };
-      const { id, name, description } = this.props;
+      const { id, name, description, isComplete } = this.props;
         return (
               <Paper
                 style={paperStyle}
@@ -72,22 +72,23 @@ export default class Task extends Component {
                 onMouseOut={this.handleMouseOut}
               >
                 <div className={style.root}>
-                    <div className={style.info}>
+                    <div className={ isComplete ? style.infogrey : style.info }>
                       <span className={style.name}>{name}</span>
                       <span className={style.description}>{description}</span>
-                      {duration(this.props.time)}
+                      <span>{duration(this.props.time)}</span>
                     </div>
                     <div className={style.controls}>
                       <IconButton
                           iconClassName="material-icons"
                           tooltip="Reset"
-                          disabled={this.props.status === 'RUNNING'}
+                          disabled={(this.props.status === 'RUNNING') || isComplete}
                           onClick={this.handleReset}
                       >
                         replay
                       </IconButton>
                       <IconButton
                           iconClassName="material-icons"
+                          disabled={isComplete}
                           tooltip="Start"
                           style={this.props.status === 'RUNNING' ? { 'display': 'none' } : null}
                           onClick={this.handleStart}
@@ -96,6 +97,7 @@ export default class Task extends Component {
                       </IconButton>
                       <IconButton
                           iconClassName="material-icons"
+                          disabled={isComplete}
                           tooltip="Stop"
                           style={this.props.status === 'STOPPED' ? { 'display': 'none' } : null}
                           onClick={this.handleStop}
@@ -103,10 +105,10 @@ export default class Task extends Component {
                         pause
                       </IconButton>
                       <Checkbox
-                          label="Done"
+                          tooltip="Complete"
                           style={checkbox}
-                          checked={this.props.isDone}
-                          onCheck={this.handleDone}
+                          checked={isComplete}
+                          onCheck={this.handleComplete}
                       />
                       <IconButton
                           iconClassName="material-icons"
