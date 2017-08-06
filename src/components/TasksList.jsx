@@ -15,9 +15,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
-        start: (id) => dispatch(action('START', {id})),
-        stop: (id) => dispatch(action('STOP', {id})),
-        reset: (id) => dispatch(action('RESET', {id})),
+        start: (id, dateStart, timeLogged) => dispatch(action('START', { id, dateStart, timeLogged })),
+        stop: (id, dateStart, timeLogged) => dispatch(action('STOP', { id, dateStart, timeLogged })),
+        reset: (id) => dispatch(action('RESET', { id })),
         onUpdate: (id, params) =>  dispatch(action('UPDATE_TASK', { key: id, ...params })),
     });
 
@@ -34,23 +34,27 @@ export default class TaskList extends Component {
             {
               !isFetching
               ? Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(filter.toLowerCase()) : false)
-                .reverse().map(key =>
-                  <Task
+                .reverse().map(key => {
+                  const item = list[key];
+                  const timer = timers.find(timer => (timer.id === key));
+                  return (<Task
                     key={key}
-                    id={list[key].id}
-                    name={list[key].name}
-                    description={list[key].description}
-                    dateStart={list[key].dateStart || 0}
-                    dateComplete={list[key].dateComplete || 0}
-                    time={timers.find(timer => (timer.id === key)).time}
-                    status={timers.find(timer => (timer.id === key)).status}
+                    id={item.id}
+                    name={item.name}
+                    description={item.description}
+                    dateStart={item.dateStart || 0}
+                    dateComplete={item.dateComplete || 0}
+                    timeLogged={item.timeLogged || 0}
+                    time={timer.time}
+                    status={timer.status}
                     start={this.props.start}
                     stop={this.props.stop}
                     reset={this.props.reset}
                     onDelete={this.onDelete}
                     onUpdate={this.props.onUpdate}
-                    isComplete={list[key].isComplete}
-                  />
+                    isComplete={item.isComplete}
+                  />);
+                  }
                 )
               : <CircularProgress />
             }

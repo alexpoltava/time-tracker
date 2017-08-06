@@ -27,11 +27,11 @@ export default class Task extends Component {
     }
 
     handleStart = () => {
-      this.props.start(this.props.id);
+      this.props.start(this.props.id, +Date.now(), this.props.timeLogged);
     }
 
     handleStop = () => {
-      this.props.stop(this.props.id);
+      this.props.stop(this.props.id, this.props.dateStart, this.props.timeLogged);
     }
 
     handleReset = () => {
@@ -39,6 +39,7 @@ export default class Task extends Component {
     }
 
     handleUpdate = () => {
+      this.handleStop();
       this.props.onUpdate(this.props.id, { isComplete: this.state.isComplete });
     }
 
@@ -61,9 +62,9 @@ export default class Task extends Component {
       }
       const deleteStyle = {
         opacity: '1',
-        transition: 'opacity 1s linear 1s'
+        transition: 'opacity 0.5s linear 0.5s'
       };
-      const { id, name, description, isComplete } = this.props;
+      const { id, name, description, isComplete, time } = this.props;
         return (
               <Paper
                 style={paperStyle}
@@ -75,7 +76,7 @@ export default class Task extends Component {
                     <div className={ isComplete ? style.infogrey : style.info }>
                       <span className={style.name}>{name}</span>
                       <span className={style.description}>{description}</span>
-                      <span>{duration(this.props.time)}</span>
+                      <span>{duration(time)}</span>
                     </div>
                     <div className={style.controls}>
                       <IconButton
@@ -105,7 +106,6 @@ export default class Task extends Component {
                         pause
                       </IconButton>
                       <Checkbox
-                          tooltip="Complete"
                           style={checkbox}
                           checked={isComplete}
                           onCheck={this.handleComplete}

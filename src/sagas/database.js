@@ -60,7 +60,10 @@ export function* processOperations() {
 export function* syncDbState(type, key, val) {
     switch (type){
       case 'child_added': {
-        yield put({ type: 'TIMER_ADD', payload: { id: key } });
+        yield put({ type: 'TIMER_ADD', payload: { id: key, isPaused: val.isPaused, timeLogged: val.timeLogged, dateStart: val.dateStart, now: +Date.now() } });
+        if(!val.isPaused) {
+          yield put({ type: 'START', payload: { id: key, doNotUpdateTask: true, dateStart: val.dateStart, timeLogged: val.timeLogged } });
+        }
         yield put({ type: TASK_ADDED, payload: { key, val } });
         break;
       }

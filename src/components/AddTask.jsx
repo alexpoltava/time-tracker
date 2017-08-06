@@ -36,6 +36,8 @@ class AddTask extends Component {
       category: 0,
       dateTimeStart: null,
       dateTimeComplete: null,
+      timeLogged: 0,
+      isPaused: false,
       isDateValid: true,
       isComplete: false
     }
@@ -87,7 +89,7 @@ class AddTask extends Component {
       const minutes = new Date(time).getMinutes();
 
       const newDateTime = new Date(year, month, day, hour, minutes);
-      const now = new Date();
+      const now = +Date.now();
 
       return  newDateTime >  now ? now : newDateTime;
     }
@@ -124,11 +126,11 @@ class AddTask extends Component {
 
     handleAdd = () => {
       if (this.validateInput()) {
-        const { name, tagsString, description, category, dateTimeStart, dateTimeComplete, isComplete } = this.state;
+        const { name, tagsString, description, category, dateTimeStart, dateTimeComplete, timeLogged, isPaused, isComplete } = this.state;
         const tagsArray = this.tagsStringToArray(tagsString);
         const dateStart = +dateTimeStart;
         const dateComplete = +dateTimeComplete || null;
-        this.props.addTask({name, tagsArray, description, category, dateStart, dateComplete, isComplete});
+        this.props.addTask({name, tagsArray, description, category, dateStart, dateComplete, timeLogged, isPaused, isComplete});
         this.setState({showAddDialog: false});
       }
     }
