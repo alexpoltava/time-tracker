@@ -4,7 +4,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import Task from './Task.jsx';
 
-import { action } from '../actions';
+import { action, UPDATE_TASK } from '../actions';
 import { removeTask } from '../actions';
 
 const mapStateToProps = state => ({
@@ -15,10 +15,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
-        start: (id, dateStart, timeLogged) => dispatch(action('START', { id, dateStart, timeLogged })),
-        stop: (id, dateStart, timeLogged) => dispatch(action('STOP', { id, dateStart, timeLogged })),
-        reset: (id) => dispatch(action('RESET', { id })),
-        onUpdate: (id, params) =>  dispatch(action('UPDATE_TASK', { key: id, ...params })),
+        start: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: false, ...params })),
+        stop: (id, timeLogged) => {
+          dispatch(action(UPDATE_TASK, { key: id, dateStart: 0, isPaused: true, timeLogged }));
+          dispatch(action('TICK', { id, timeElapsed: timeLogged }));
+        },
+        reset: (id) => { dispatch(action('RESET', { id })); dispatch(action(UPDATE_TASK, { key: id, timeLogged: 0 }));},
+        onUpdate: (id, params) =>  dispatch(action(UPDATE_TASK, { key: id, ...params })),
     });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -45,6 +48,7 @@ export default class TaskList extends Component {
                     dateStart={item.dateStart || 0}
                     dateComplete={item.dateComplete || 0}
                     timeLogged={item.timeLogged || 0}
+                    isPaused={item.isPaused}
                     time={timer.time}
                     status={timer.status}
                     start={this.props.start}

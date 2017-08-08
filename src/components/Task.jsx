@@ -27,11 +27,13 @@ export default class Task extends Component {
     }
 
     handleStart = () => {
-      this.props.start(this.props.id, +Date.now(), this.props.timeLogged);
+      this.props.start(this.props.id, { dateStart: +Date.now(), timeLogged: this.props.timeLogged });
     }
 
     handleStop = () => {
-      this.props.stop(this.props.id, this.props.dateStart, this.props.timeLogged);
+      const { id, dateStart, timeLogged } = this.props;
+      const logged = (dateStart === 0 ? 0 : timeLogged + (+Date.now() - dateStart) / 1000);
+      this.props.stop(id, logged);
     }
 
     handleReset = () => {
@@ -39,7 +41,9 @@ export default class Task extends Component {
     }
 
     handleUpdate = () => {
-      this.handleStop();
+      if (this.state.isComplete && !this.props.isPaused) {
+          this.handleStop();
+      }
       this.props.onUpdate(this.props.id, { isComplete: this.state.isComplete });
     }
 
@@ -82,7 +86,7 @@ export default class Task extends Component {
                       <IconButton
                           iconClassName="material-icons"
                           tooltip="Reset"
-                          disabled={(this.props.status === 'RUNNING') || isComplete}
+                          disabled={(!this.props.isPaused) || isComplete}
                           onClick={this.handleReset}
                       >
                         replay
@@ -91,7 +95,7 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           disabled={isComplete}
                           tooltip="Start"
-                          style={this.props.status === 'RUNNING' ? { 'display': 'none' } : null}
+                          style={this.props.isPaused ? null : { 'display': 'none' }}
                           onClick={this.handleStart}
                       >
                         play_arrow
@@ -100,7 +104,7 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           disabled={isComplete}
                           tooltip="Stop"
-                          style={this.props.status === 'STOPPED' ? { 'display': 'none' } : null}
+                          style={this.props.isPaused ? { 'display': 'none' } : null}
                           onClick={this.handleStop}
                       >
                         pause

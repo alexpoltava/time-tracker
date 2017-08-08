@@ -108,7 +108,10 @@ class AddTask extends Component {
       });
     }
 
-    handleCompleteChange = () => this.setState({isComplete: !this.state.isComplete});
+    handleCompleteChange = () => this.setState({
+      isComplete: !this.state.isComplete,
+      isPaused: !this.state.isComplete
+    });
 
     handleDateCompleteChange = (event, date) => {
       this.setState({
@@ -130,7 +133,17 @@ class AddTask extends Component {
         const tagsArray = this.tagsStringToArray(tagsString);
         const dateStart = +dateTimeStart;
         const dateComplete = +dateTimeComplete || null;
-        this.props.addTask({name, tagsArray, description, category, dateStart, dateComplete, timeLogged, isPaused, isComplete});
+        this.props.addTask({
+            name,
+            tagsArray,
+            description,
+            category,
+            dateStart,
+            dateComplete,
+            timeLogged: isComplete ? (dateComplete - dateStart) / 1000 : timeLogged,
+            isPaused,
+            isComplete
+        });
         this.setState({showAddDialog: false});
       }
     }
