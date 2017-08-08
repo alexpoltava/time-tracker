@@ -1,4 +1,5 @@
-import {  REGISTER_REQUEST,
+import {
+          REGISTER_REQUEST,
           REGISTER_SUCCESS,
           REGISTER_FAILURE } from '../actions';
 

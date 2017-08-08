@@ -1,4 +1,4 @@
-import { take, call, put, cancelled, fork, cancel, select } from 'redux-saga/effects';
+import { take, call, put, cancelled, fork, cancel, select, all } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { firebaseAuth } from '../config/constants';
 import api from '../api';
@@ -15,7 +15,10 @@ import { LOGIN_REQUEST,
          LOGIN_WITH_GOOGLE_REQUEST,
          LOGIN_WITH_GOOGLE_FAILURE,
          START_DB_LISTENER,
-         STOP_DB_LISTENER } from '../actions';
+         STOP_DB_LISTENER,
+         CLEAR_ALL_TASKS,
+         TIMER_REMOVE,
+         KILL_TIMER_TASKS, } from '../actions';
 
 
 export function* auth(payload) {
@@ -86,8 +89,16 @@ export function* loginFlow() {
                 yield cancel(dbSyncTask);
                 yield put({ type: STOP_DB_LISTENER });
             }
+            const timerTasks = yield select(state => state.session.timerTasks);
+            if(timerTasks.length) {
+              yield all(timerTasks.map(timer => timer.cancel()));
+              yield put({ type: KILL_TIMER_TASKS });
+            }
             try {
                 yield call([session.clearSession, api.logout]);
+                yield put({ type: CLEAR_ALL_TASKS });
+                yield put({ type: 'CLEAR_ALL_TIMERS' });
+
             } catch (error) {
                 yield put({ type: LOGOUT_FAILURE, error: error.message });
             }

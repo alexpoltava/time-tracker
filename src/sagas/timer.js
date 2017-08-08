@@ -1,6 +1,7 @@
-import { take, takeEvery, call, put, race, actionChannel } from 'redux-saga/effects';
+import { take, call, put, race, fork } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
-import { UPDATE_TASK } from '../actions';
+
+import { TIMER_TASK_ADD } from '../actions'
 
 function* handleStart(action) {
     // eslint-disable-next-line no-constant-condition
@@ -22,6 +23,9 @@ function* handleStart(action) {
 }
 
 export default function* root() {
-    const channel = yield actionChannel('START');
-    yield takeEvery(channel, handleStart);
+    while (true) {
+      const action = yield take('START');
+      const timerTask = yield fork(handleStart, action);
+      yield put({ type: TIMER_TASK_ADD, payload: { timerTask } });
+    }
 }

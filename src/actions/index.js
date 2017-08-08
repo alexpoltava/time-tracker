@@ -24,6 +24,10 @@ export const UPDATE_TASK = 'UPDATE_TASK';
 export const TASK_ADDED = 'TASK_ADDED';
 export const TASK_REMOVED = 'TASK_REMOVED';
 export const TASK_UPDATED = 'TASK_UPDATED';
+export const KILL_TIMER_TASKS = 'KILL_TIMER_TASKS';
+
+export const TIMER_TASK_ADD = 'TIMER_TASK_ADD';
+export const CLEAR_ALL_TASKS = 'CLEAR_ALL_TASKS';
 
 export const FETCH_REQUEST = 'FETCH_REQUEST';
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';

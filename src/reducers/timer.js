@@ -48,7 +48,9 @@ const timers = (state = [], action) => {
         case 'TIMER_ADD': {
             return [...state, timer(undefined, action)];
         }
-
+        case 'CLEAR_ALL_TIMERS': {
+            return [];
+        }
         case 'TIMER_REMOVE': {
             return state.filter(el => (el.id !== action.payload.id));
         }

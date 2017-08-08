@@ -3,7 +3,7 @@ import api from '../api';
 
 import { REGISTER_REQUEST,
          REGISTER_SUCCESS,
-         REGISTER_FAILURE } from '../actions';
+         REGISTER_FAILURE, } from '../actions';
 
 export function* handleRegister(action) {
     try {

@@ -9,8 +9,7 @@ import { ADD_TASK,
           TASK_ADDED,
           TASK_REMOVED,
           UPDATE_TASK,
-          TASK_UPDATED,
-        } from '../actions';
+          TASK_UPDATED, } from '../actions';
 
 
 function* addTask(action) {

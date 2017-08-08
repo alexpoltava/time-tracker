@@ -8,7 +8,9 @@ import { LOGIN_REQUEST,
           LOGOUT_FAILURE,
           RESTORE_AUTH,
           START_DB_LISTENER,
-          STOP_DB_LISTENER
+          STOP_DB_LISTENER,
+          TIMER_TASK_ADD,
+          KILL_TIMER_TASKS,
       } from '../actions';
 
 const session = (state = {
@@ -18,7 +20,8 @@ const session = (state = {
     isLoggingOut: false,
     error: null,
     user: {},
-    dbSyncTask: null
+    dbSyncTask: null,
+    timerTasks: [],
 }, action) => {
     switch (action.type) {
         case LOGIN_REQUEST:
@@ -75,6 +78,17 @@ const session = (state = {
                 ...state,
                 dbSyncTask: null
             };
+        case TIMER_TASK_ADD:
+            return {
+              ...state,
+              timerTasks: state.timerTasks.filter(task => task.isRunning()).concat(action.payload.timerTask),
+            };
+        case KILL_TIMER_TASKS:
+            return {
+              ...state,
+              timerTasks: [],
+            }
+
         case RESTORE_AUTH:
             return state;
         default:

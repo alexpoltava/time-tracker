@@ -7,9 +7,12 @@ import {  ADD_TASK,
           TASK_ADDED,
           TASK_REMOVED,
           TASK_UPDATED,
+          CLEAR_ALL_TASKS,
          } from '../actions';
 
-export const tasks = (state = { isFetching: false, list: {}, error: null }, action) => {
+const initialState = { isFetching: false, list: {}, error: null };
+
+export const tasks = (state = initialState, action) => {
     switch (action.type) {
         case FETCH_REQUEST: {
             return {
@@ -51,6 +54,11 @@ export const tasks = (state = { isFetching: false, list: {}, error: null }, acti
                 list: newList
             };
         }
+
+        case CLEAR_ALL_TASKS: {
+            return initialState;
+        }
+
         default: {
             return state;
         }

@@ -10,7 +10,7 @@ import { auth,
          loginFlow,
          syncAuthState,
          createAuthChannel,
-         updatedAuthState } from './auth.js';
+         updatedAuthState, } from './auth.js';
 
 import { LOGIN_REQUEST,
           LOGIN_SUCCESS,
@@ -18,7 +18,7 @@ import { LOGIN_REQUEST,
           LOGOUT_REQUEST,
           LOGOUT_SUCCESS,
           LOGIN_WITH_GOOGLE_REQUEST,
-          LOGIN_WITH_GOOGLE_FAILURE } from '../actions';
+          LOGIN_WITH_GOOGLE_FAILURE, } from '../actions';
 
 import session from '../components/utils/session';
 
