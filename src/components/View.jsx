@@ -18,7 +18,7 @@ export default class View extends Component {
                 return <ViewAbout />;
             }
             default: {
-                return <ViewTasks />;
+                return <ViewTasks uid={this.props.uid} />;
             }
         }
     }

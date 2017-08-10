@@ -16,12 +16,15 @@ export default class ViewTasks extends Component {
     render() {
         return (
             <div>
-                <AddTask />
+                <AddTask
+                  uid={this.props.uid}
+                />
                 <FilterTasks
                   handleChange={this.handleChange}
                 />
                 <TasksList
                   filter={this.state.filter}
+                  uid={this.props.uid}
                 />
             </div>
         );

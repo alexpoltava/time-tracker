@@ -2,21 +2,22 @@ import { take, takeEvery, call, put, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { ref } from '../config/constants';
 import api from '../api';
-
+import { forkDBSyncTask, killDBSyncTask } from './auth';
 
 import { ADD_TASK,
           REMOVE_TASK,
           TASK_ADDED,
           TASK_REMOVED,
           UPDATE_TASK,
-          TASK_UPDATED, } from '../actions';
+          TASK_UPDATED,
+          CHANGE_DBSYNC_UID, } from '../actions';
 
 
 function* addTask(action) {
     try {
         yield call(api.dbAddNewTask, action.payload);
     } catch (error) {
-
+      console.error(error);
     }
 }
 
@@ -28,7 +29,7 @@ function* updateTask(action) {
     try {
         yield call(api.dbUpdateTask, action.payload);
     } catch (error) {
-
+      console.error(error);
     }
 }
 
@@ -40,7 +41,7 @@ function* removeTask(action) {
     try {
         yield call(api.dbTaskRemove, action.payload.id);
     } catch (error) {
-
+      console.error(error);
     }
 }
 
@@ -48,11 +49,25 @@ function* waitRemoveTask() {
     yield takeEvery(REMOVE_TASK, removeTask);
 }
 
+function* changeDBSyncUID(action) {
+    try {
+        yield call(killDBSyncTask);
+        yield call(forkDBSyncTask, action.payload.uid);
+    } catch (error) {
+      console.error(error);
+    }
+}
+
+function* waitChangeDBSyncUID() {
+    yield takeEvery(CHANGE_DBSYNC_UID, changeDBSyncUID);
+}
+
 
 export function* processOperations() {
     yield fork(waitAddTask);
     yield fork(waitRemoveTask);
     yield fork(waitUpdateTask);
+    yield fork(waitChangeDBSyncUID);
 }
 
 // Callbacks from  firebase

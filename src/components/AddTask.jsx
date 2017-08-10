@@ -142,7 +142,8 @@ class AddTask extends Component {
             dateComplete,
             timeLogged: isComplete ? (dateComplete - dateStart) / 1000 : timeLogged,
             isPaused,
-            isComplete
+            isComplete,
+            uid: this.props.uid,
         });
         this.setState({showAddDialog: false});
       }

@@ -14,15 +14,14 @@ const dbWriteUserData = (email, uid, emailSent) => (
 const isUserExist = uid => ref(`users/${uid}`).key;
 
 const dbAddNewTask = (payload) => {
-    const uid = firebaseAuth().currentUser.uid;
-    const tasks = ref.child(`users/${uid}/tasks`);
+    // const uid = firebaseAuth().currentUser.uid;
+    const tasks = ref.child(`users/${payload.uid}/tasks`);
     const newTask = tasks.push();
     newTask.set({ id: newTask.key, ...payload });
 };
 
 const dbUpdateTask = (payload) => {
-    const uid = firebaseAuth().currentUser.uid;
-    const task = ref.child(`users/${uid}/tasks/${payload.key}`);
+    const task = ref.child(`users/${payload.uid}/tasks/${payload.key}`);
     task.update(payload);
 };
 
@@ -32,9 +31,9 @@ const dbFetchTasks = () => {
     return tasks.once('value');
 };
 
-const dbTaskRemove = (key) => {
-    const uid = firebaseAuth().currentUser.uid;
-    const task = ref.child(`users/${uid}/tasks/${key}`);
+const dbTaskRemove = (payload) => {
+    // const uid = firebaseAuth().currentUser.uid;
+    const task = ref.child(`users/${payload.uid}/tasks/${payload.key}`);
     return task.remove();
 };
 

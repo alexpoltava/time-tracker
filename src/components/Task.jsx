@@ -16,7 +16,7 @@ export default class Task extends Component {
     }
 
     handleDelete = () => {
-        this.props.onDelete(this.props.id);
+        this.props.onDelete({ key: this.props.id, uid: this.props.uid });
     }
     handleMouseOver = () => {
         this.setState({isHovered: true});
@@ -27,24 +27,24 @@ export default class Task extends Component {
     }
 
     handleStart = () => {
-      this.props.start(this.props.id, { dateStart: +Date.now(), timeLogged: this.props.timeLogged });
+      this.props.start(this.props.id, { dateStart: +Date.now(), timeLogged: this.props.timeLogged, uid: this.props.uid });
     }
 
     handleStop = () => {
-      const { id, dateStart, timeLogged } = this.props;
-      const logged = (dateStart === 0 ? 0 : timeLogged + (+Date.now() - dateStart) / 1000);
-      this.props.stop(id, logged);
+      const { id, dateStart } = this.props;
+      const logged = (dateStart === 0 ? 0 : this.props.timeLogged + (+Date.now() - dateStart) / 1000);
+      this.props.stop(id, { timeLogged: logged, uid: this.props.uid });
     }
 
     handleReset = () => {
-      this.props.reset(this.props.id);
+      this.props.reset(this.props.id, { uid: this.props.uid });
     }
 
     handleUpdate = () => {
       if (this.state.isComplete && !this.props.isPaused) {
           this.handleStop();
       }
-      this.props.onUpdate(this.props.id, { isComplete: this.state.isComplete });
+      this.props.onUpdate(this.props.id, { isComplete: this.state.isComplete, uid: this.props.uid });
     }
 
     handleComplete = (e, isInputChecked) => {

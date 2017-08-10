@@ -26,6 +26,8 @@ export const TASK_REMOVED = 'TASK_REMOVED';
 export const TASK_UPDATED = 'TASK_UPDATED';
 export const KILL_TIMER_TASKS = 'KILL_TIMER_TASKS';
 
+export const CHANGE_DBSYNC_UID = 'CHANGE_DBSYNC_UID';
+
 export const TIMER_TASK_ADD = 'TIMER_TASK_ADD';
 export const CLEAR_ALL_TASKS = 'CLEAR_ALL_TASKS';
 

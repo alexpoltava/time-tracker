@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import CircularProgress from 'material-ui/CircularProgress';
-
 import Task from './Task.jsx';
 
 import { action, UPDATE_TASK } from '../actions';
@@ -16,18 +15,18 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
         start: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: false, ...params })),
-        stop: (id, timeLogged) => {
-          dispatch(action(UPDATE_TASK, { key: id, dateStart: 0, isPaused: true, timeLogged }));
-          dispatch(action('TICK', { id, timeElapsed: timeLogged }));
+        stop: (id, params) => {
+          dispatch(action(UPDATE_TASK, { key: id, dateStart: 0, isPaused: true, ...params }));
+          dispatch(action('TICK', { id, timeElapsed: params.timeLogged }));
         },
-        reset: (id) => { dispatch(action('RESET', { id })); dispatch(action(UPDATE_TASK, { key: id, timeLogged: 0 }));},
+        reset: (id, params) => { dispatch(action('RESET', { id, ...params })); dispatch(action(UPDATE_TASK, { key: id, timeLogged: 0, ...params }));},
         onUpdate: (id, params) =>  dispatch(action(UPDATE_TASK, { key: id, ...params })),
     });
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class TaskList extends Component {
-    onDelete = (key) => {
-      this.props.removeTask(key);
+    onDelete = (payload) => {
+      this.props.removeTask(payload);
     }
 
     render() {
@@ -57,6 +56,7 @@ export default class TaskList extends Component {
                     onDelete={this.onDelete}
                     onUpdate={this.props.onUpdate}
                     isComplete={item.isComplete}
+                    uid={this.props.uid}
                   />);
                   }
                 )

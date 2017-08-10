@@ -67,6 +67,28 @@ export function* restoreAuth() {
     }
 }
 
+export function* forkDBSyncTask(uid) {
+  const dbSyncTask = yield fork(updatedDbState, uid);
+  yield put({ type: START_DB_LISTENER, payload: { dbSyncTask } });
+}
+
+export function* killDBSyncTask() {
+    const getDBSyncTask = state => state.session.dbSyncTask;
+    const dbSyncTask = yield select(getDBSyncTask);
+    if (dbSyncTask && dbSyncTask.isRunning()) {
+        yield cancel(dbSyncTask);
+        yield put({ type: STOP_DB_LISTENER });
+    }
+}
+
+export function* killTimerTasks() {
+    const timerTasks = yield select(state => state.session.timerTasks);
+    if(timerTasks.length) {
+      yield all(timerTasks.map(timer => timer.cancel()));
+      yield put({ type: KILL_TIMER_TASKS });
+    }
+}
+
 export function* loginFlow() {
     yield call(restoreAuth);
     while (true) {
@@ -83,22 +105,12 @@ export function* loginFlow() {
             if (task) {
                 yield cancel(task);
             }
-            const getDBSyncTask = state => state.session.dbSyncTask;
-            const dbSyncTask = yield select(getDBSyncTask);
-            if (dbSyncTask.isRunning()) {
-                yield cancel(dbSyncTask);
-                yield put({ type: STOP_DB_LISTENER });
-            }
-            const timerTasks = yield select(state => state.session.timerTasks);
-            if(timerTasks.length) {
-              yield all(timerTasks.map(timer => timer.cancel()));
-              yield put({ type: KILL_TIMER_TASKS });
-            }
             try {
-                yield call([session.clearSession, api.logout]);
+                yield call(killDBSyncTask);
+                yield call(killTimerTasks);
                 yield put({ type: CLEAR_ALL_TASKS });
                 yield put({ type: 'CLEAR_ALL_TIMERS' });
-
+                yield call([session.clearSession, api.logout]);
             } catch (error) {
                 yield put({ type: LOGOUT_FAILURE, error: error.message });
             }
@@ -110,8 +122,6 @@ export function* loginFlow() {
 export function* syncAuthState(user) {
     if (user) {
         yield put({ type: LOGIN_SUCCESS, payload: { user } });
-        const dbSyncTask = yield fork(updatedDbState, user.uid);
-        yield put({ type: START_DB_LISTENER, payload: { dbSyncTask } });
         yield call(session.saveSession, user);
     } else {
         yield put({ type: LOGOUT_SUCCESS });
