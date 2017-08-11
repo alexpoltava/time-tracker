@@ -9,7 +9,8 @@ import { action, CHANGE_DBSYNC_UID, KILL_TIMER_TASKS,  } from '../../actions'
 import styles from './Dashboard.less';
 
 const mapStateToProps = state => ({
-    uid: state.session.user.uid
+    uid: state.session.user.uid,
+    loggedinUID: state.session.user.uid,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -43,6 +44,7 @@ export default class Dashboard extends Component {
                 <View
                   menuItem={this.state.menuItem}
                   uid={this.props.match.params.uid}
+                  loggedinUID={this.props.loggedinUID}
                 />
             </div>
         );

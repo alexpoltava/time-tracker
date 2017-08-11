@@ -79,6 +79,7 @@ export function* killDBSyncTask() {
         yield cancel(dbSyncTask);
         yield put({ type: STOP_DB_LISTENER });
     }
+    yield put({ type: CLEAR_ALL_TASKS });
 }
 
 export function* killTimerTasks() {
@@ -87,6 +88,7 @@ export function* killTimerTasks() {
       yield all(timerTasks.map(timer => timer.cancel()));
       yield put({ type: KILL_TIMER_TASKS });
     }
+    yield put({ type: 'CLEAR_ALL_TIMERS' });
 }
 
 export function* loginFlow() {
@@ -108,8 +110,6 @@ export function* loginFlow() {
             try {
                 yield call(killDBSyncTask);
                 yield call(killTimerTasks);
-                yield put({ type: CLEAR_ALL_TASKS });
-                yield put({ type: 'CLEAR_ALL_TIMERS' });
                 yield call([session.clearSession, api.logout]);
             } catch (error) {
                 yield put({ type: LOGOUT_FAILURE, error: error.message });

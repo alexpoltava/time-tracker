@@ -57,6 +57,7 @@ export default class TaskList extends Component {
                     onUpdate={this.props.onUpdate}
                     isComplete={item.isComplete}
                     uid={this.props.uid}
+                    loggedinUID={this.props.loggedinUID}
                   />);
                   }
                 )

@@ -166,7 +166,7 @@ class AddTask extends Component {
             <div className={styles.root}>
                 <RaisedButton
                     label='Add new task'
-                    disabled={this.state.showAddDialog}
+                    disabled={this.state.showAddDialog || (this.props.uid !== this.props.loggedinUID)}
                     onTouchTap={this.handleOpen}
                 />
                 <Dialog
