@@ -4,7 +4,7 @@ import Sidebar from '../Sidebar.jsx';
 import View from '../View.jsx';
 import { connect } from 'react-redux';
 
-import { action, CHANGE_DBSYNC_UID, KILL_TIMER_TASKS,  } from '../../actions'
+import { action, CHANGE_DBSYNC_UID } from '../../actions'
 
 import styles from './Dashboard.less';
 

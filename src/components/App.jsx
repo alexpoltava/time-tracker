@@ -78,10 +78,12 @@ class App extends Component {
             <div className={styles.app}>
                 <NavMenu props={this.props} />
                 <div className={styles.content}>
-                  <Route exact path="/" component={Home} />
-                  <Route path="/login" component={Login} />
-                  <Route path="/register" component={Register} />
-                  <PrivateRoute path="/dashboard/:uid" auth={this.props.isLoggedIn} component={Dashboard} />
+                  <Switch>
+                    <Route exact path="/" component={Home} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/register" component={Register} />
+                    <PrivateRoute path="/dashboard/:uid" auth={this.props.isLoggedIn} component={Dashboard} />
+                  </Switch>
               </div>
             </div>
         );

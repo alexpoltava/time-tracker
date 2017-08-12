@@ -1,8 +1,8 @@
-import { take, takeEvery, call, put, fork } from 'redux-saga/effects';
+import { take, takeEvery, call, put, fork, cancelled } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { ref } from '../config/constants';
 import api from '../api';
-import { forkDBSyncTask, killDBSyncTask } from './auth';
+import { forkDBSyncTask, killDBSyncTask, killTimerTasks } from './auth';
 
 import { ADD_TASK,
           REMOVE_TASK,
@@ -52,6 +52,7 @@ function* waitRemoveTask() {
 function* changeDBSyncUID(action) {
     try {
         yield call(killDBSyncTask);
+        yield call(killTimerTasks);
         yield call(forkDBSyncTask, action.payload.uid);
     } catch (error) {
       console.error(error);
@@ -101,23 +102,28 @@ export function* syncDbState(type, key, val) {
 }
 
 export function createDbChannel(uid) {
-    const dbListener = eventChannel((emit) => {
-        ref.child(`users/${uid}/tasks/`)
+    const dbListener = eventChannel( emit => {
+        const unsubscribeChildAdded = ref.child(`users/${uid}/tasks/`)
         .on(
             'child_added',
             childSnapshot => emit({ type: 'child_added', key: childSnapshot.key, val: childSnapshot.val() })
         );
-        ref.child(`users/${uid}/tasks/`)
+        const unsubscribeChildRemoved = ref.child(`users/${uid}/tasks/`)
         .on(
             'child_removed',
             childSnapshot => emit({ type: 'child_removed', key: childSnapshot.key })
           );
-        ref.child(`users/${uid}/tasks/`)
+        const unsubscribeChildChanged = ref.child(`users/${uid}/tasks/`)
         .on(
             'child_changed',
             childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val()})
           );
-        return () => ref.off(dbListener);
+        const unsubscribe = () => {
+            ref.child(`users/${uid}/tasks/`).off('child_added', unsubscribeChildAdded);
+            ref.child(`users/${uid}/tasks/`).off('child_removed', unsubscribeChildRemoved);
+            ref.child(`users/${uid}/tasks/`).off('child_changed', unsubscribeChildChanged);
+        };
+        return unsubscribe;
     });
     return dbListener;
 }
@@ -125,7 +131,13 @@ export function createDbChannel(uid) {
 export function* updatedDbState(uid) {
     const dbStateListener = createDbChannel(uid);
     while (true) {
+      try {
         const { type, key, val } = yield take(dbStateListener);
         yield call(syncDbState, type, key, val);
+      } finally {
+        if (yield cancelled()) {
+            dbStateListener.close();
+        }
+      }
     }
 }
