@@ -75,10 +75,10 @@ export function* processOperations() {
 export function* syncDbState(type, key, val) {
     switch (type){
       case 'child_added': {
-        const { isPaused, timeLogged, dateStart } = val;
-        yield put({ type: 'TIMER_ADD', payload: { id: key, isPaused, timeLogged, dateStart, now: +Date.now() } });
+        const { isPaused, periods } = val;
+        yield put({ type: 'TIMER_ADD', payload: { id: key, isPaused, periods, now: +Date.now() } });
         if(!isPaused) {
-          yield put({ type: 'START', payload: { id: key, dateStart, timeLogged } });
+          yield put({ type: 'START', payload: { id: key, periods } });
         }
         yield put({ type: TASK_ADDED, payload: { key, val } });
         break;
@@ -89,12 +89,12 @@ export function* syncDbState(type, key, val) {
         break;
       }
       case 'child_changed': {
-        const { isPaused, timeLogged, dateStart } = val;
+        const { isPaused, periods } = val;
         yield put({ type: TASK_UPDATED, payload: { key, val } });
         if(isPaused) {
-          yield put({ type: 'STOP', payload: { id: key, dateStart, timeLogged } });
+          yield put({ type: 'STOP', payload: { id: key, periods } });
         } else {
-          yield put({ type: 'START', payload: { id: key, dateStart, timeLogged } });
+          yield put({ type: 'START', payload: { id: key, periods } });
         }
       }
       default:

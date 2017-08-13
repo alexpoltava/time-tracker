@@ -1,12 +1,23 @@
+function getTimeElapsed(periods, now) {
+  return periods
+      ? periods.reduce((total, period) => {
+        const start = period.dateStart;
+        const end = period.dateComplete || now;
+        total = total + (end - start) / 1000;
+        return total;
+        }, 0)
+      : 0;
+}
+
 const timer = (state = { status: 'STOPPED', time: 0 }, action) => {
     switch (action.type) {
         case 'TIMER_ADD': {
-            const { id, isPaused, timeLogged, dateStart, now } = action.payload;
+            const { id, isPaused, periods, now } = action.payload;
             return {
                 ...state,
                 id,
                 status: isPaused ? 'STOPPED' : 'RUNNING',
-                time: timeLogged + (isPaused ? 0 : (now - dateStart) / 1000),
+                time: getTimeElapsed(periods, now),
             };
         }
         case 'START': {
@@ -24,9 +35,10 @@ const timer = (state = { status: 'STOPPED', time: 0 }, action) => {
         }
 
         case 'TICK': {
+            const { periods, now } = action.payload;
             return {
                 ...state,
-                time: action.payload.timeElapsed,
+                time: getTimeElapsed(periods, now),
             };
         }
 

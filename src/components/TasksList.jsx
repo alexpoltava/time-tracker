@@ -15,11 +15,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
         start: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: false, ...params })),
-        stop: (id, params) => {
-          dispatch(action(UPDATE_TASK, { key: id, dateStart: 0, isPaused: true, ...params }));
-          dispatch(action('TICK', { id, timeElapsed: params.timeLogged }));
+        stop: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: true, ...params })),
+        reset: (id, params) => {
+          dispatch(action(UPDATE_TASK, { key: id, periods: [], ...params }));
+          dispatch(action('TICK', { id, periods: null, now: +Date.now() }));
         },
-        reset: (id, params) => { dispatch(action('RESET', { id, ...params })); dispatch(action(UPDATE_TASK, { key: id, timeLogged: 0, ...params }));},
         onUpdate: (id, params) =>  dispatch(action(UPDATE_TASK, { key: id, ...params })),
     });
 
@@ -46,7 +46,7 @@ export default class TaskList extends Component {
                     description={item.description}
                     dateStart={item.dateStart || 0}
                     dateComplete={item.dateComplete || 0}
-                    timeLogged={item.timeLogged || 0}
+                    periods={item.periods || 0}
                     isPaused={item.isPaused}
                     time={timer.time}
                     status={timer.status}

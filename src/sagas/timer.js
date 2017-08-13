@@ -16,8 +16,14 @@ function* handleStart(action) {
         } else if (remove) {
             if (action.payload.id === remove.payload.key) break;
         } else {
-            const timeElapsed = (+Date.now() - action.payload.dateStart) / 1000  + action.payload.timeLogged;
-            yield put({ type: 'TICK', payload: { id: action.payload.id, timeElapsed } });
+            yield put({
+              type: 'TICK',
+              payload: {
+                id: action.payload.id,
+                periods: action.payload.periods,
+                now: +Date.now()
+              }
+            });
         }
     }
 }

@@ -27,24 +27,30 @@ export default class Task extends Component {
     }
 
     handleStart = () => {
-      this.props.start(this.props.id, { dateStart: +Date.now(), timeLogged: this.props.timeLogged, uid: this.props.uid });
+      const { id, uid } = this.props;
+      const periods = [...this.props.periods, {dateStart: +Date.now()}];
+      this.props.start(id, {  uid, periods });
     }
 
     handleStop = () => {
-      const { id, dateStart } = this.props;
-      const logged = (dateStart === 0 ? 0 : this.props.timeLogged + (+Date.now() - dateStart) / 1000);
-      this.props.stop(id, { timeLogged: logged, uid: this.props.uid });
+      const { id, uid } = this.props;
+      const periods = [...this.props.periods.slice(0, -1),
+        Object.assign(...this.props.periods.slice(-1), {dateComplete: +Date.now()})];
+      this.props.stop(id, { uid, periods });
     }
 
     handleReset = () => {
-      this.props.reset(this.props.id, { uid: this.props.uid });
+      const { id, uid } = this.props;
+      this.props.reset(id, { uid });
     }
 
     handleUpdate = () => {
-      if (this.state.isComplete && !this.props.isPaused) {
+      const { id, uid, isPaused } = this.props;
+      const { isComplete } = this.state;
+      if (isComplete && !isPaused) {
           this.handleStop();
       }
-      this.props.onUpdate(this.props.id, { isComplete: this.state.isComplete, uid: this.props.uid });
+      this.props.onUpdate(id, { isComplete, uid });
     }
 
     handleComplete = (e, isInputChecked) => {
