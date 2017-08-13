@@ -16,10 +16,7 @@ const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
         start: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: false, ...params })),
         stop: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: true, ...params })),
-        reset: (id, params) => {
-          dispatch(action(UPDATE_TASK, { key: id, periods: [], ...params }));
-          dispatch(action('TICK', { id, periods: null, now: +Date.now() }));
-        },
+        reset: (id, params) => dispatch(action(UPDATE_TASK, { key: id, periods: [], ...params })),
         onUpdate: (id, params) =>  dispatch(action(UPDATE_TASK, { key: id, ...params })),
     });
 

@@ -91,11 +91,8 @@ export function* syncDbState(type, key, val) {
       case 'child_changed': {
         const { isPaused, periods } = val;
         yield put({ type: TASK_UPDATED, payload: { key, val } });
-        if(isPaused) {
-          yield put({ type: 'STOP', payload: { id: key, periods } });
-        } else {
-          yield put({ type: 'START', payload: { id: key, periods } });
-        }
+        yield put({ type: 'TICK', payload: {id: key, periods, now: +Date.now()} }); // update timer
+        yield put({ type: isPaused ? 'STOP' : 'START', payload: { id: key, periods } });
       }
       default:
     }
