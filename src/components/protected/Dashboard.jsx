@@ -9,7 +9,6 @@ import { action, CHANGE_DBSYNC_UID } from '../../actions'
 import styles from './Dashboard.less';
 
 const mapStateToProps = state => ({
-    uid: state.session.user.uid,
     loggedinUID: state.session.user.uid,
 });
 
@@ -44,7 +43,7 @@ export default class Dashboard extends Component {
                 <View
                   menuItem={this.state.menuItem}
                   uid={this.props.match.params.uid}
-                  loggedinUID={this.props.loggedinUID}
+                  readOnly={this.props.loggedinUID !== this.props.match.params.uid}
                 />
             </div>
         );

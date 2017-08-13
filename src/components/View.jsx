@@ -20,7 +20,7 @@ export default class View extends Component {
             default: {
                 return <ViewTasks
                           uid={this.props.uid}
-                          loggedinUID={this.props.loggedinUID}
+                          readOnly={this.props.readOnly}
                         />;
             }
         }

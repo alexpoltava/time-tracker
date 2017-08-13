@@ -86,14 +86,14 @@ export default class Task extends Component {
                       <IconButton
                           iconClassName="material-icons"
                           tooltip="Reset"
-                          disabled={(!this.props.isPaused) || isComplete || (this.props.uid !== this.props.loggedinUID)}
+                          disabled={(!this.props.isPaused) || isComplete || this.props.readOnly}
                           onClick={this.handleReset}
                       >
                         replay
                       </IconButton>
                       <IconButton
                           iconClassName="material-icons"
-                          disabled={isComplete || (this.props.uid !== this.props.loggedinUID)}
+                          disabled={isComplete || this.props.readOnly}
                           tooltip="Start"
                           style={this.props.isPaused ? null : { 'display': 'none' }}
                           onClick={this.handleStart}
@@ -102,7 +102,7 @@ export default class Task extends Component {
                       </IconButton>
                       <IconButton
                           iconClassName="material-icons"
-                          disabled={isComplete || (this.props.uid !== this.props.loggedinUID)}
+                          disabled={isComplete || this.props.readOnly}
                           tooltip="Stop"
                           style={this.props.isPaused ? { 'display': 'none' } : null}
                           onClick={this.handleStop}
@@ -111,13 +111,13 @@ export default class Task extends Component {
                       </IconButton>
                       <Checkbox
                           style={checkbox}
-                          disabled={(this.props.uid !== this.props.loggedinUID)}
+                          disabled={this.props.readOnly}
                           checked={isComplete}
                           onCheck={this.handleComplete}
                       />
                       <IconButton
                           iconClassName="material-icons"
-                          disabled={(this.props.uid !== this.props.loggedinUID)}
+                          disabled={this.props.readOnly}
                           className='delete'
                           iconStyle={{iconHoverColor: 'red'}}
                           style={!this.state.isHovered ? {...deleteStyle, ...{'visibility':'hidden', 'opacity':'0'}} : deleteStyle}

@@ -18,7 +18,7 @@ export default class ViewTasks extends Component {
             <div>
                 <AddTask
                   uid={this.props.uid}
-                  loggedinUID={this.props.loggedinUID}
+                  readOnly={this.props.readOnly}
                 />
                 <FilterTasks
                   handleChange={this.handleChange}
@@ -26,7 +26,7 @@ export default class ViewTasks extends Component {
                 <TasksList
                   filter={this.state.filter}
                   uid={this.props.uid}
-                  loggedinUID={this.props.loggedinUID}
+                  readOnly={this.props.readOnly}
                 />
             </div>
         );
