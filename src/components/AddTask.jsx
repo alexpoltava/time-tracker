@@ -36,7 +36,6 @@ class AddTask extends Component {
       category: 0,
       dateTimeStart: null,
       dateTimeComplete: null,
-      timeLogged: 0,
       isPaused: false,
       isDateValid: true,
       isComplete: false
@@ -110,7 +109,8 @@ class AddTask extends Component {
 
     handleCompleteChange = () => this.setState({
       isComplete: !this.state.isComplete,
-      isPaused: !this.state.isComplete
+      isPaused: !this.state.isComplete,
+      dateTimeComplete: this.state.isComplete ? null : this.state.dateTimeComplete,
     });
 
     handleDateCompleteChange = (event, date) => {
@@ -129,7 +129,7 @@ class AddTask extends Component {
 
     handleAdd = () => {
       if (this.validateInput()) {
-        const { name, tagsString, description, category, dateTimeStart, dateTimeComplete, timeLogged, isPaused, isComplete } = this.state;
+        const { name, tagsString, description, category, dateTimeStart, dateTimeComplete, isPaused, isComplete } = this.state;
         const tagsArray = this.tagsStringToArray(tagsString);
         const dateStart = +dateTimeStart;
         const dateComplete = +dateTimeComplete || null;
@@ -138,9 +138,12 @@ class AddTask extends Component {
             tagsArray,
             description,
             category,
-            dateStart,
-            dateComplete,
-            timeLogged: isComplete ? (dateComplete - dateStart) / 1000 : timeLogged,
+            periods: {
+                      0: {
+                          dateStart,
+                          dateComplete
+                        }
+                    },
             isPaused,
             isComplete,
             uid: this.props.uid,
