@@ -14,14 +14,8 @@ import { addTask } from '../actions';
 
 import styles from './AddTask.less';
 
-const tempCategories = [
-  {id: 1, name: 'Work'},
-  {id: 2, name: 'Shopping'},
-  {id: 3, name: 'Entertainment'},
-  {id: 4, name: 'Sport'}
-];
-
 const mapStateToProps = (state) => ({
+  categories: state.settings.categories
 });
 
 @connect(mapStateToProps, { addTask })
@@ -210,7 +204,7 @@ class AddTask extends Component {
                     onChange={this.handleCategoryChange}
                   >
                   {
-                    tempCategories.map(cat=>
+                    this.props.categories.map(cat=>
                     <MenuItem key={cat.id} value={cat.id} primaryText={cat.name} />
                     )
                   }

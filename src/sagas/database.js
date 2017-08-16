@@ -1,4 +1,4 @@
-import { take, takeEvery, call, put, fork, cancelled } from 'redux-saga/effects';
+import { take, takeEvery, call, put, fork, cancelled, race } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { ref } from '../config/constants';
 import api from '../api';
@@ -10,7 +10,9 @@ import { ADD_TASK,
           TASK_REMOVED,
           UPDATE_TASK,
           TASK_UPDATED,
-          CHANGE_DBSYNC_UID, } from '../actions';
+          CHANGE_DBSYNC_UID,
+          UPDATE_SETTINGS,
+          SETTINGS_UPDATED, } from '../actions';
 
 
 function* addTask(action) {
@@ -28,6 +30,18 @@ function* waitUpdateTask() {
 function* updateTask(action) {
     try {
         yield call(api.dbUpdateTask, action.payload);
+    } catch (error) {
+      console.error(error);
+    }
+}
+
+function* waitUpdateSettings() {
+    yield takeEvery(UPDATE_SETTINGS, updateSettings);
+}
+
+function* updateSettings(action) {
+    try {
+        yield call(api.dbUpdateSettings, action.payload);
     } catch (error) {
       console.error(error);
     }
@@ -69,10 +83,11 @@ export function* processOperations() {
     yield fork(waitRemoveTask);
     yield fork(waitUpdateTask);
     yield fork(waitChangeDBSyncUID);
+    yield fork(waitUpdateSettings);
 }
 
 // Callbacks from  firebase
-export function* syncDbState(type, key, val) {
+export function* syncDbTaskState(type, key, val) {
     switch (type){
       case 'child_added': {
         const { isPaused, periods } = val;
@@ -98,7 +113,7 @@ export function* syncDbState(type, key, val) {
     }
 }
 
-export function createDbChannel(uid) {
+export function createDbTaskChannel(uid) {
     const dbListener = eventChannel( emit => {
         const unsubscribeChildAdded = ref.child(`users/${uid}/tasks/`)
         .on(
@@ -125,15 +140,72 @@ export function createDbChannel(uid) {
     return dbListener;
 }
 
+export function* syncDbSettingsState(type, key, val) {
+    console.log(type, key, val);
+    switch (type){
+      case 'child_added': {
+        yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });
+        break;
+      }
+      case 'child_removed': {
+        console.log('settings child_removed');
+        break;
+      }
+      case 'child_changed': {
+        yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });
+        break;
+      }
+      default:
+    }
+}
+
+export function createDbSettingsChannel(uid) {
+    const dbListener = eventChannel( emit => {
+        const unsubscribeChildAdded = ref.child(`users/${uid}/settings/`)
+        .on(
+            'child_added',
+            childSnapshot => emit({ type: 'child_added', key: childSnapshot.key, val: childSnapshot.val() })
+        );
+        const unsubscribeChildRemoved = ref.child(`users/${uid}/settings/`)
+        .on(
+            'child_removed',
+            childSnapshot => emit({ type: 'child_removed', key: childSnapshot.key })
+          );
+        const unsubscribeChildChanged = ref.child(`users/${uid}/settings/`)
+        .on(
+            'child_changed',
+            childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val()})
+          );
+        const unsubscribe = () => {
+            ref.child(`users/${uid}/settings/`).off('child_added', unsubscribeChildAdded);
+            ref.child(`users/${uid}/settings/`).off('child_removed', unsubscribeChildRemoved);
+            ref.child(`users/${uid}/settings/`).off('child_changed', unsubscribeChildChanged);
+        };
+        return unsubscribe;
+    });
+    return dbListener;
+}
+
 export function* updatedDbState(uid) {
-    const dbStateListener = createDbChannel(uid);
+    const dbTaskStateListener = createDbTaskChannel(uid);
+    const dbSettingsStateListener = createDbSettingsChannel(uid);
     while (true) {
       try {
-        const { type, key, val } = yield take(dbStateListener);
-        yield call(syncDbState, type, key, val);
+        const { task, settings } = yield race({
+            task: take(dbTaskStateListener),
+            settings: take(dbSettingsStateListener)
+        });
+        if(task) {
+            const { type, key, val } = task;
+            yield call(syncDbTaskState, type, key, val);
+        } else if (settings) {
+            const { type, key, val } = settings;
+            yield call(syncDbSettingsState, type, key, val);
+        }
       } finally {
         if (yield cancelled()) {
-            dbStateListener.close();
+            dbTaskStateListener.close();
+            dbSettingsStateListener.close();
         }
       }
     }

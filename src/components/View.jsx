@@ -12,7 +12,10 @@ export default class View extends Component {
                 return <ViewAnalytics />;
             }
             case 3: {
-                return <ViewSettings />;
+                return <ViewSettings
+                          uid={this.props.uid}
+                          readOnly={this.props.readOnly}
+                       />;
             }
             case 4: {
                 return <ViewAbout />;

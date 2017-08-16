@@ -10,6 +10,7 @@ const mapStateToProps = state => ({
     list: state.tasks.list,
     isFetching: state.tasks.isFetching,
     timers: state.timers,
+    hideCompleted: state.settings.hideCompleted,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -33,6 +34,7 @@ export default class TaskList extends Component {
             {
               !isFetching
               ? Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(filter.toLowerCase()) : false)
+                .filter(key => (this.props.hideCompleted ? (!list[key].isComplete) : true))
                 .reverse().map(key => {
                   const item = list[key];
                   const timer = timers.find(timer => (timer.id === key));

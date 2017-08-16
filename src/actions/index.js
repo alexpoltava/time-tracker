@@ -37,6 +37,10 @@ export const FETCH_FAILURE = 'FETCH_FAILURE';
 
 export const RESTORE_AUTH = 'RESTORE_AUTH';
 
+export const UPDATE_SETTINGS = 'UPDATE_SETTINGS';
+export const SETTINGS_UPDATED = 'SETTINGS_UPDATED';
+
+
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
 export const register = (email, password) => ({ type: REGISTER_REQUEST, payload: { email, pw: password } });

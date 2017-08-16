@@ -25,6 +25,11 @@ const dbUpdateTask = (payload) => {
     task.update(payload);
 };
 
+const dbUpdateSettings = (payload) => {
+    const settings = ref.child(`users/${payload.uid}/settings/`);
+    settings.update({...payload, uid: null});
+};
+
 const dbFetchTasks = () => {
     const uid = firebaseAuth().currentUser.uid;
     const tasks = ref.child(`users/${uid}/tasks`);
@@ -95,4 +100,5 @@ export default {
     dbUpdateTask,
     dbFetchTasks,
     dbTaskRemove,
+    dbUpdateSettings,
 };
