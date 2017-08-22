@@ -32,19 +32,17 @@ const mapDispatchToProps = (dispatch) => ({
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ViewSettings extends Component {
-    state = {
-      hideCompleted: false
-    }
-
-    handleUpdateSettings = () => {
-      const { hideCompleted } = this.state;
+    handleUpdateSettings = (props) => {
       const { uid } = this.props;
-
-      this.props.updateSettings({ uid, hideCompleted });
+      this.props.updateSettings({ uid, ...props });
     }
 
-    handleHideCompletedChange = (e, isInputChecked) => {
-      this.setState({ hideCompleted: isInputChecked }, this.handleUpdateSettings);
+    handleHideCompletedChange = (e, hideCompleted) => {
+      this.handleUpdateSettings({ hideCompleted });
+    }
+
+    handleHideCompletedChange = (e, hideCompleted) => {
+      this.handleUpdateSettings({ hideCompleted });
     }
 
     render() {

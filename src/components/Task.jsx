@@ -10,9 +10,11 @@ import style from './Task.less';
 
 
 export default class Task extends Component {
-    state = {
-      isHovered: false,
-      isComplete: false,
+    constructor(props) {
+      super(props);
+        this.state = {
+          isHovered: false,
+        }
     }
 
     handleDelete = () => {
@@ -44,17 +46,17 @@ export default class Task extends Component {
       this.props.reset(id, { uid });
     }
 
-    handleUpdate = () => {
+    handleUpdate = (params) => {
       const { id, uid, isPaused } = this.props;
-      const { isComplete } = this.state;
+      const { isComplete } = params;
       if (isComplete && !isPaused) {
           this.handleStop();
       }
-      this.props.onUpdate(id, { isComplete, uid });
+      this.props.onUpdate(id, { ...params, uid });
     }
 
-    handleComplete = (e, isInputChecked) => {
-      this.setState({ isComplete: isInputChecked }, this.handleUpdate);
+    handleComplete = (e, isComplete) => {
+      this.handleUpdate({ isComplete });
     }
 
     render() {

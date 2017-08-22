@@ -141,7 +141,6 @@ export function createDbTaskChannel(uid) {
 }
 
 export function* syncDbSettingsState(type, key, val) {
-    console.log(type, key, val);
     switch (type){
       case 'child_added': {
         yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });

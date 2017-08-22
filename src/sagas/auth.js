@@ -14,6 +14,7 @@ import { LOGIN_REQUEST,
          LOGOUT_FAILURE,
          LOGIN_WITH_GOOGLE_REQUEST,
          LOGIN_WITH_GOOGLE_FAILURE,
+         RESTORE_AUTH,
          START_DB_LISTENER,
          STOP_DB_LISTENER,
          CLEAR_ALL_TASKS,
@@ -49,6 +50,7 @@ export function* authWithGoogleAccount() {
 }
 
 export function* restoreAuth() {
+    yield put({ type: RESTORE_AUTH });
     const credential = yield call(session.extractSession);
     if (credential) {
         try {

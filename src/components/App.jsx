@@ -19,6 +19,7 @@ import styles from './App.less';
 
 const mapStateToProps = state => ({
     isLoggedIn: state.session.isLoggedIn,
+    isRestoringAuth: state.session.isRestoringAuth,
     isLoggingOut: state.session.isLoggingOut,
     uid: state.session.user.uid,
     user: state.session.user
@@ -28,7 +29,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={ props => {
       return rest.auth
           ? <Component {...props}/>
-          : <Redirect to={{
+          : rest.isRestoringAuth
+            ? <CircularProgress size={80} thickness={5} />
+            : <Redirect to={{
                 pathname: '/login',
                 state: { from: props.location }
               }}/>;
@@ -82,7 +85,12 @@ class App extends Component {
                     <Route exact path="/" component={Home} />
                     <Route path="/login" component={Login} />
                     <Route path="/register" component={Register} />
-                    <PrivateRoute path="/dashboard/:uid" auth={this.props.isLoggedIn} component={Dashboard} />
+                    <PrivateRoute
+                      path="/dashboard/:uid"
+                      auth={this.props.isLoggedIn}
+                      isRestoringAuth={this.props.isRestoringAuth}
+                      component={Dashboard}
+                    />
                   </Switch>
               </div>
             </div>

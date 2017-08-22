@@ -18,6 +18,7 @@ const session = (state = {
     isLoggingWithGoogleIn: false,
     isLoggedIn: false,
     isLoggingOut: false,
+    isRestoringAuth: false,
     error: null,
     user: {},
     dbSyncTask: null,
@@ -45,6 +46,7 @@ const session = (state = {
             return {
                 ...state,
                 isLoggingIn: false,
+                isRestoringAuth: false,
                 isLoggingWithGoogleIn: false,
                 isLoggedIn: true,
                 user: action.payload.user,
@@ -53,6 +55,7 @@ const session = (state = {
             return {
                 ...state,
                 isLoggingIn: false,
+                isRestoringAuth: false,
                 isLoggedIn: false,
                 error: action.error,
             };
@@ -90,7 +93,10 @@ const session = (state = {
             }
 
         case RESTORE_AUTH:
-            return state;
+            return {
+              ...state,
+              isRestoringAuth: true,
+            }
         default:
             return state;
     }
