@@ -35,7 +35,8 @@ export default class TaskList extends Component {
           <div className={styles.root}>
             {
               !isFetching
-              ? Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(filter.toLowerCase()) : false)
+              ? Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(filter.value.toLowerCase()) : false)
+                .filter(key => (list[key].category === filter.category) || !filter.category)
                 .filter(key => (this.props.hideCompleted ? (!list[key].isComplete) : true))
                 .reverse().map(key => {
                   const item = list[key];

@@ -8,11 +8,12 @@ import styles from './ViewTasks.less';
 
 export default class ViewTasks extends Component {
     state = {
-        filter: ''
+        value: '',
+        category: ''
     }
 
     handleChange = (filter) => {
-      this.setState({filter});
+      this.setState({...filter});
     }
 
     render() {
@@ -26,7 +27,7 @@ export default class ViewTasks extends Component {
                   handleChange={this.handleChange}
                 />
                 <TasksList
-                  filter={this.state.filter}
+                  filter={this.state}
                   uid={this.props.uid}
                   readOnly={this.props.readOnly}
                 />
