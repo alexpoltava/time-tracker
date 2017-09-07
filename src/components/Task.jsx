@@ -88,7 +88,7 @@ export default class Task extends Component {
                     <div className={ isComplete ? style.infogrey : style.info }>
                       <span className={style.name}>{name}</span>
                       <span className={style.description}>{description}</span>
-                      <span>{duration(time)}</span>
+                      <span className={style.duration}>{duration(time)}</span>
                     </div>
                     <div className={style.controls}>
                       <IconButton

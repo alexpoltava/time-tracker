@@ -11,11 +11,12 @@ import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 
 import { addTask } from '../actions';
+import { defaultCategories } from '../config/constants';
 
 import styles from './AddTask.less';
 
 const mapStateToProps = (state) => ({
-  categories: state.settings.categories
+  categories: [...defaultCategories, ...state.settings.categories.filter(cat => !cat.isRemoved)]
 });
 
 @connect(mapStateToProps, { addTask })
@@ -27,7 +28,7 @@ class AddTask extends Component {
       tagsString: '',
       description: '',
       isTagsValid: true,
-      category: 0,
+      category: 1,
       dateTimeStart: null,
       dateTimeComplete: null,
       isPaused: false,

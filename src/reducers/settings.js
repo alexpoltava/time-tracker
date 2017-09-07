@@ -3,12 +3,7 @@ import { UPDATE_SETTINGS,
 
 const initialState = {
   hideCompleted: false,
-  categories: [
-    {id: 1, name: 'Work'},
-    {id: 2, name: 'Shopping'},
-    {id: 3, name: 'Entertainment'},
-    {id: 4, name: 'Sport'}
-  ],
+  categories: [],
 };
 
 const settings = (state = initialState, action) => {
