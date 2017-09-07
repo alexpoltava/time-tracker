@@ -12,19 +12,19 @@ export default class View extends Component {
                 return <ViewAnalytics />;
             }
             case 3: {
-                return <ViewSettings
-                          uid={this.props.uid}
-                          readOnly={this.props.readOnly}
-                       />;
+                return (<ViewSettings
+                  uid={this.props.uid}
+                  readOnly={this.props.readOnly}
+                />);
             }
             case 4: {
                 return <ViewAbout />;
             }
             default: {
-                return <ViewTasks
-                          uid={this.props.uid}
-                          readOnly={this.props.readOnly}
-                        />;
+                return (<ViewTasks
+                  uid={this.props.uid}
+                  readOnly={this.props.readOnly}
+                />);
             }
         }
     }

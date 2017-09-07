@@ -1,7 +1,7 @@
 import { take, call, put, race, fork } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 
-import { TIMER_TASK_ADD } from '../actions'
+import { TIMER_TASK_ADD } from '../actions';
 
 function* handleStart(action) {
     // eslint-disable-next-line no-constant-condition
@@ -17,12 +17,12 @@ function* handleStart(action) {
             if (action.payload.id === remove.payload.key) break;
         } else {
             yield put({
-              type: 'TICK',
-              payload: {
-                id: action.payload.id,
-                periods: action.payload.periods,
-                now: +Date.now()
-              }
+                type: 'TICK',
+                payload: {
+                    id: action.payload.id,
+                    periods: action.payload.periods,
+                    now: +Date.now()
+                }
             });
         }
     }
@@ -30,8 +30,8 @@ function* handleStart(action) {
 
 export default function* root() {
     while (true) {
-      const action = yield take('START');
-      const timerTask = yield fork(handleStart, action);
-      yield put({ type: TIMER_TASK_ADD, payload: { timerTask } });
+        const action = yield take('START');
+        const timerTask = yield fork(handleStart, action);
+        yield put({ type: TIMER_TASK_ADD, payload: { timerTask } });
     }
 }

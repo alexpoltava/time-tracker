@@ -15,10 +15,10 @@ export const ref = firebase.database().ref();
 export const firebaseAuth = firebase.auth;
 
 export const defaultCategories = [
-    {id: 1, name: 'Work'},
-    {id: 2, name: 'Shopping'},
-    {id: 3, name: 'Entertainment'},
-    {id: 4, name: 'Sport'},
-    {id: 5, name: 'Other'}
+    { id: 1, name: 'Work' },
+    { id: 2, name: 'Shopping' },
+    { id: 3, name: 'Entertainment' },
+    { id: 4, name: 'Sport' },
+    { id: 5, name: 'Other' }
 ];
 export const DEFAULT_CATEGORIES_NUMBER = defaultCategories.length + 1;

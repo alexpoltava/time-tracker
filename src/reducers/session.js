@@ -5,7 +5,6 @@ import { LOGIN_REQUEST,
           LOGIN_WITH_GOOGLE_FAILURE,
           LOGOUT_REQUEST,
           LOGOUT_SUCCESS,
-          LOGOUT_FAILURE,
           RESTORE_AUTH,
           START_DB_LISTENER,
           STOP_DB_LISTENER,
@@ -83,20 +82,21 @@ const session = (state = {
             };
         case TIMER_TASK_ADD:
             return {
-              ...state,
-              timerTasks: state.timerTasks.filter(task => task.isRunning()).concat(action.payload.timerTask),
+                ...state,
+                timerTasks: [...state.timerTasks.filter(task => task.isRunning()),
+                    ...action.payload.timerTask],
             };
         case KILL_TIMER_TASKS:
             return {
-              ...state,
-              timerTasks: [],
-            }
+                ...state,
+                timerTasks: [],
+            };
 
         case RESTORE_AUTH:
             return {
-              ...state,
-              isRestoringAuth: true,
-            }
+                ...state,
+                isRestoringAuth: true,
+            };
         default:
             return state;
     }

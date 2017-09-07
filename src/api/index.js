@@ -1,5 +1,4 @@
 import { ref, firebaseAuth } from '../config/constants';
-import session from '../components/utils/session';
 
 // /////////////// database operations //////////////////////////
 const dbWriteUserData = (email, uid, emailSent) => (
@@ -27,7 +26,7 @@ const dbUpdateTask = (payload) => {
 
 const dbUpdateSettings = (payload) => {
     const settings = ref.child(`users/${payload.uid}/settings/`);
-    settings.update({...payload, uid: null});
+    settings.update({ ...payload, uid: null });
 };
 
 const dbFetchTasks = () => {
@@ -58,7 +57,7 @@ const saveUser = (user) => {
     if (user.emailVerified === false) {
         return user.sendEmailVerification()
           .then(() => dbWriteUserData(user.email, user.uid, true))
-          .catch(err => console.log(err.message));
+          .catch(err => console.error(err.message));
     }
     return dbWriteUserData(user.email, user.uid, false);
 };

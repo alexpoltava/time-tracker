@@ -18,7 +18,6 @@ import { LOGIN_REQUEST,
          START_DB_LISTENER,
          STOP_DB_LISTENER,
          CLEAR_ALL_TASKS,
-         TIMER_REMOVE,
          KILL_TIMER_TASKS, } from '../actions';
 
 
@@ -70,8 +69,8 @@ export function* restoreAuth() {
 }
 
 export function* forkDBSyncTask(uid) {
-  const dbSyncTask = yield fork(updatedDbState, uid);
-  yield put({ type: START_DB_LISTENER, payload: { dbSyncTask } });
+    const dbSyncTask = yield fork(updatedDbState, uid);
+    yield put({ type: START_DB_LISTENER, payload: { dbSyncTask } });
 }
 
 export function* killDBSyncTask() {
@@ -86,9 +85,9 @@ export function* killDBSyncTask() {
 
 export function* killTimerTasks() {
     const timerTasks = yield select(state => state.session.timerTasks);
-    if(timerTasks.length) {
-      yield all(timerTasks.map(timer => timer.cancel()));
-      yield put({ type: KILL_TIMER_TASKS });
+    if (timerTasks.length) {
+        yield all(timerTasks.map(timer => timer.cancel()));
+        yield put({ type: KILL_TIMER_TASKS });
     }
     yield put({ type: 'CLEAR_ALL_TIMERS' });
 }
@@ -145,7 +144,7 @@ export function createAuthChannel() {
 export function* updatedAuthState() {
     const authStateListener = createAuthChannel();
     while (true) {
-        const { user, error } = yield take(authStateListener);
+        const { user } = yield take(authStateListener);
         yield call(syncAuthState, user);
     }
 }

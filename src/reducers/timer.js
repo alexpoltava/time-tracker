@@ -1,11 +1,10 @@
 function getTimeElapsed(periods, now) {
-  return periods
+    return periods
       ? periods.reduce((total, period) => {
-        const start = period.dateStart;
-        const end = period.dateComplete || now;
-        total = total + (end - start) / 1000;
-        return total;
-        }, 0)
+          const start = period.dateStart;
+          const end = period.dateComplete || now;
+          return total + ((end - start) / 1000);
+      }, 0)
       : 0;
 }
 

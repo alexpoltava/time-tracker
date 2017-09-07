@@ -43,13 +43,15 @@ export const SETTINGS_UPDATED = 'SETTINGS_UPDATED';
 
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 
-export const register = (email, password) => ({ type: REGISTER_REQUEST, payload: { email, pw: password } });
+export const register = (email, password) =>
+  ({ type: REGISTER_REQUEST, payload: { email, pw: password } });
 
 export const logout = () => ({ type: LOGOUT_REQUEST });
 
 export const loginSuccess = payload => ({ type: LOGIN_SUCCESS, payload });
 
-export const login = (email, password) => ({ type: LOGIN_REQUEST, payload: { email, pw: password } });
+export const login = (email, password) =>
+  ({ type: LOGIN_REQUEST, payload: { email, pw: password } });
 
 export const loginWithGoogleAccount = () => ({ type: LOGIN_WITH_GOOGLE_REQUEST });
 

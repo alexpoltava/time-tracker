@@ -1,7 +1,7 @@
 import { fork } from 'redux-saga/effects';
 
 import timer from './timer';
-import { loginFlow, updatedAuthState } from './auth.js';
+import { loginFlow, updatedAuthState } from './auth';
 import { registerUser } from './register';
 import { processOperations } from './database';
 

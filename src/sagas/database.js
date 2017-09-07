@@ -19,7 +19,7 @@ function* addTask(action) {
     try {
         yield call(api.dbAddNewTask, action.payload);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
 }
 
@@ -31,20 +31,20 @@ function* updateTask(action) {
     try {
         yield call(api.dbUpdateTask, action.payload);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
-}
-
-function* waitUpdateSettings() {
-    yield takeEvery(UPDATE_SETTINGS, updateSettings);
 }
 
 function* updateSettings(action) {
     try {
         yield call(api.dbUpdateSettings, action.payload);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
+}
+
+function* waitUpdateSettings() {
+    yield takeEvery(UPDATE_SETTINGS, updateSettings);
 }
 
 function* waitAddTask() {
@@ -55,7 +55,7 @@ function* removeTask(action) {
     try {
         yield call(api.dbTaskRemove, action.payload.id);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
 }
 
@@ -69,7 +69,7 @@ function* changeDBSyncUID(action) {
         yield call(killTimerTasks);
         yield call(forkDBSyncTask, action.payload.uid);
     } catch (error) {
-      console.error(error);
+        console.error(error);
     }
 }
 
@@ -88,33 +88,34 @@ export function* processOperations() {
 
 // Callbacks from  firebase
 export function* syncDbTaskState(type, key, val) {
-    switch (type){
-      case 'child_added': {
-        const { isPaused, periods } = val;
-        yield put({ type: 'TIMER_ADD', payload: { id: key, isPaused, periods, now: +Date.now() } });
-        if(!isPaused) {
-          yield put({ type: 'START', payload: { id: key, periods } });
+    switch (type) {
+        case 'child_added': {
+            const { isPaused, periods } = val;
+            yield put({ type: 'TIMER_ADD', payload: { id: key, isPaused, periods, now: +Date.now() } });
+            if (!isPaused) {
+                yield put({ type: 'START', payload: { id: key, periods } });
+            }
+            yield put({ type: TASK_ADDED, payload: { key, val } });
+            break;
         }
-        yield put({ type: TASK_ADDED, payload: { key, val } });
-        break;
-      }
-      case 'child_removed': {
-        yield put({ type: TASK_REMOVED, payload: { key } });
-        yield put({ type: 'TIMER_REMOVE', payload: { id: key } });
-        break;
-      }
-      case 'child_changed': {
-        const { isPaused, periods } = val;
-        yield put({ type: TASK_UPDATED, payload: { key, val } });
-        yield put({ type: 'TICK', payload: {id: key, periods, now: +Date.now()} }); // update timer
-        yield put({ type: isPaused ? 'STOP' : 'START', payload: { id: key, periods } });
-      }
-      default:
+        case 'child_removed': {
+            yield put({ type: TASK_REMOVED, payload: { key } });
+            yield put({ type: 'TIMER_REMOVE', payload: { id: key } });
+            break;
+        }
+        case 'child_changed': {
+            const { isPaused, periods } = val;
+            yield put({ type: TASK_UPDATED, payload: { key, val } });
+            yield put({ type: 'TICK', payload: { id: key, periods, now: +Date.now() } }); // update timer
+            yield put({ type: isPaused ? 'STOP' : 'START', payload: { id: key, periods } });
+            break;
+        }
+        default:
     }
 }
 
 export function createDbTaskChannel(uid) {
-    const dbListener = eventChannel( emit => {
+    const dbListener = eventChannel((emit) => {
         const unsubscribeChildAdded = ref.child(`users/${uid}/tasks/`)
         .on(
             'child_added',
@@ -128,7 +129,7 @@ export function createDbTaskChannel(uid) {
         const unsubscribeChildChanged = ref.child(`users/${uid}/tasks/`)
         .on(
             'child_changed',
-            childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val()})
+            childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val() })
           );
         const unsubscribe = () => {
             ref.child(`users/${uid}/tasks/`).off('child_added', unsubscribeChildAdded);
@@ -141,25 +142,25 @@ export function createDbTaskChannel(uid) {
 }
 
 export function* syncDbSettingsState(type, key, val) {
-    switch (type){
-      case 'child_added': {
-        yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });
-        break;
-      }
-      case 'child_removed': {
-        console.log('settings child_removed');
-        break;
-      }
-      case 'child_changed': {
-        yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });
-        break;
-      }
-      default:
+    switch (type) {
+        case 'child_added': {
+            yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });
+            break;
+        }
+        case 'child_removed': {
+            console.log('settings child_removed');
+            break;
+        }
+        case 'child_changed': {
+            yield put({ type: SETTINGS_UPDATED, payload: { [key]: val } });
+            break;
+        }
+        default:
     }
 }
 
 export function createDbSettingsChannel(uid) {
-    const dbListener = eventChannel( emit => {
+    const dbListener = eventChannel((emit) => {
         const unsubscribeChildAdded = ref.child(`users/${uid}/settings/`)
         .on(
             'child_added',
@@ -173,7 +174,7 @@ export function createDbSettingsChannel(uid) {
         const unsubscribeChildChanged = ref.child(`users/${uid}/settings/`)
         .on(
             'child_changed',
-            childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val()})
+            childSnapshot => emit({ type: 'child_changed', key: childSnapshot.key, val: childSnapshot.val() })
           );
         const unsubscribe = () => {
             ref.child(`users/${uid}/settings/`).off('child_added', unsubscribeChildAdded);
@@ -189,23 +190,23 @@ export function* updatedDbState(uid) {
     const dbTaskStateListener = createDbTaskChannel(uid);
     const dbSettingsStateListener = createDbSettingsChannel(uid);
     while (true) {
-      try {
-        const { task, settings } = yield race({
-            task: take(dbTaskStateListener),
-            settings: take(dbSettingsStateListener)
-        });
-        if(task) {
-            const { type, key, val } = task;
-            yield call(syncDbTaskState, type, key, val);
-        } else if (settings) {
-            const { type, key, val } = settings;
-            yield call(syncDbSettingsState, type, key, val);
+        try {
+            const { task, settings } = yield race({
+                task: take(dbTaskStateListener),
+                settings: take(dbSettingsStateListener)
+            });
+            if (task) {
+                const { type, key, val } = task;
+                yield call(syncDbTaskState, type, key, val);
+            } else if (settings) {
+                const { type, key, val } = settings;
+                yield call(syncDbSettingsState, type, key, val);
+            }
+        } finally {
+            if (yield cancelled()) {
+                dbTaskStateListener.close();
+                dbSettingsStateListener.close();
+            }
         }
-      } finally {
-        if (yield cancelled()) {
-            dbTaskStateListener.close();
-            dbSettingsStateListener.close();
-        }
-      }
     }
 }
