@@ -1,24 +1,25 @@
-import { SETTINGS_UPDATED } from '../actions';
+import { UPDATE_SETTINGS,
+         SETTINGS_UPDATED, } from '../actions'
 
 const initialState = {
-    hideCompleted: false,
-    categories: [],
+  hideCompleted: false,
+  categories: [],
 };
 
 const settings = (state = initialState, action) => {
-    switch (action.type) {
-        case SETTINGS_UPDATED: {
-            return {
-                ...state,
-                ...action.payload
-            };
-        }
-        default: {
-            return {
-                ...state
-            };
-        }
+  switch(action.type) {
+    case SETTINGS_UPDATED: {
+      return {
+        ...state,
+        ...action.payload
+      };
     }
-};
+    default: {
+      return {
+        ...state
+      };
+    }
+  }
+}
 
 export default settings;

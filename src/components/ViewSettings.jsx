@@ -3,7 +3,7 @@ import SelectField from 'material-ui/SelectField';
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
-import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
 
 import { connect } from 'react-redux';
 
@@ -55,7 +55,8 @@ export default class ViewSettings extends Component {
 
     handleAddCategory = () => {
       if(defaultCategories.find(cat => cat.name === this.state.categoryName)) {
-        console.log('Already exists in default categories');
+        this.setState({ categoryName: '' },
+          console.log('Already exists in default categories'));
         return;
       }
 
@@ -63,7 +64,8 @@ export default class ViewSettings extends Component {
       if(existingIndex !== -1) { // category already exists
         const categories = this.props.categories.map((cat, i) =>
           i === existingIndex ? { ...cat, isRemoved: false } : cat);
-        this.handleUpdateSettings({ categories });
+        this.setState({ categoryName: '' },
+          this.handleUpdateSettings({ categories }));
       } else { // add new category
         const index = this.props.categories.length + DEFAULT_CATEGORIES_NUMBER;
         const categories = [...this.props.categories, {
@@ -71,7 +73,8 @@ export default class ViewSettings extends Component {
             name: this.state.categoryName,
             isRemoved: false
           }];
-        this.handleUpdateSettings({ categories });
+        this.setState({ categoryName: '' },
+          this.handleUpdateSettings({ categories }));
       }
     }
 
@@ -90,7 +93,7 @@ export default class ViewSettings extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{margin: '8px'}}>
                 <h2>Settings</h2>
                 <div style={style.container}>
                   <Checkbox
@@ -103,31 +106,44 @@ export default class ViewSettings extends Component {
                 <hr style={style.hr} />
                 <br />
                   <h3>Categories management:</h3>
-                  <TextField
-                    disabled={this.props.readOnly}
-                    name="category"
-                    value={this.state.categoryName}
-                    onChange={this.handleChangeCategory}
-                  />
-                  <FlatButton label="Add"
-                    disabled={!this.state.categoryName}
-                    onTouchTap={this.handleAddCategory}
-                  />
-                  <SelectField
-                    disabled={this.props.readOnly}
-                    value={this.state.category}
-                    onChange={this.handleSelectCategory}
+                  <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <TextField
+                      disabled={this.props.readOnly}
+                      name="category"
+                      placeholder="New category name"
+                      value={this.state.categoryName}
+                      onChange={this.handleChangeCategory}
+                    />
+                  <IconButton label="Add"
+                      iconClassName="material-icons"
+                      disabled={!this.state.categoryName}
+                      tooltip="Add new category"
+                      onTouchTap={this.handleAddCategory}
                   >
-                  {
-                    this.props.categories.filter(cat => !cat.isRemoved).map(cat =>
-                      <MenuItem key={cat.id} value={cat.id} primaryText={cat.name} />
-                    )
-                  }
-                  </SelectField>
-                  <FlatButton label="Remove"
-                    disabled={!this.state.category}
-                    onTouchTap={this.handleRemoveCategory}
-                  />
+                    note_add
+                  </IconButton>
+                  </div>
+                  <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <SelectField
+                      disabled={this.props.readOnly}
+                      value={this.state.category}
+                      onChange={this.handleSelectCategory}
+                    >
+                    {
+                      this.props.categories.filter(cat => !cat.isRemoved).map(cat =>
+                        <MenuItem key={cat.id} value={cat.id} primaryText={cat.name} />
+                      )
+                    }
+                    </SelectField>
+                    <IconButton label="Remove"
+                      iconClassName="material-icons"
+                      disabled={!this.state.category}
+                      tooltip="Delete category"
+                      onTouchTap={this.handleRemoveCategory}
+                    >
+                      delete
+                    </IconButton>
+                  </div>
                 </div>
                 <span></span>
             </div>

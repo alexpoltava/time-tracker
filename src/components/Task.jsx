@@ -69,9 +69,14 @@ export default class Task extends Component {
         alignItems: 'center',
       };
       const checkbox = {
-        width: '36px'
+        width: '24px'
+      }
+      const button = {
+        padding: '0'
       }
       const deleteStyle = {
+        padding: '0',
+        marginRight: '8px',
         opacity: '1',
         transition: 'opacity 0.5s linear 0.5s'
       };
@@ -94,6 +99,7 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           tooltip="Reset"
                           disabled={(!this.props.isPaused) || isComplete || this.props.readOnly}
+                          style={button}
                           onClick={this.handleReset}
                       >
                         replay
@@ -102,7 +108,7 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           disabled={isComplete || this.props.readOnly}
                           tooltip="Start"
-                          style={this.props.isPaused ? null : { 'display': 'none' }}
+                          style={this.props.isPaused ? button : {...button, ...{ 'display': 'none' }}}
                           onClick={this.handleStart}
                       >
                         play_arrow
@@ -111,13 +117,14 @@ export default class Task extends Component {
                           iconClassName="material-icons"
                           disabled={isComplete || this.props.readOnly}
                           tooltip="Stop"
-                          style={this.props.isPaused ? { 'display': 'none' } : null}
+                          style={this.props.isPaused ? {...button, ...{ 'display': 'none' }} : button}
                           onClick={this.handleStop}
                       >
                         pause
                       </IconButton>
                       <Checkbox
                           style={checkbox}
+                          inputStyle={checkbox}
                           disabled={this.props.readOnly}
                           checked={isComplete}
                           onCheck={this.handleComplete}
