@@ -6,6 +6,8 @@ import Task from './Task.jsx';
 import { action, UPDATE_TASK } from '../actions';
 import { removeTask } from '../actions';
 
+import styles from './TasksList.less';
+
 const mapStateToProps = state => ({
     list: state.tasks.list,
     isFetching: state.tasks.isFetching,
@@ -30,7 +32,7 @@ export default class TaskList extends Component {
     render() {
       const { list, filter, isFetching, timers } = this.props;
         return (
-          <div>
+          <div className={styles.root}>
             {
               !isFetching
               ? Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(filter.toLowerCase()) : false)

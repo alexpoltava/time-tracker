@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import pluralize from 'pluralize';
+
 
 import duration from './utils/duration';
 
@@ -17,7 +19,7 @@ export default class Sidebar extends Component {
             <div className={style.root}>
                 <h2>Total logged:</h2>
                 <h2>{duration(this.props.timers.reduce((prev, curr) => prev + curr.time, 0))}</h2>
-                <span>with {this.props.timers.length} tasks</span>
+                <span>with {pluralize('tasks', this.props.timers.length, true)}</span>
                 <Menu onSelectMenuItem={this.props.onSelectMenuItem} />
             </div>
         );

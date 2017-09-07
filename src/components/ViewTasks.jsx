@@ -4,6 +4,8 @@ import TasksList from './TasksList.jsx';
 import AddTask from './AddTask.jsx';
 import FilterTasks from './FilterTasks.jsx';
 
+import styles from './ViewTasks.less';
+
 export default class ViewTasks extends Component {
     state = {
         filter: ''
@@ -15,7 +17,7 @@ export default class ViewTasks extends Component {
 
     render() {
         return (
-            <div>
+            <div className={styles.root}>
                 <AddTask
                   uid={this.props.uid}
                   readOnly={this.props.readOnly}

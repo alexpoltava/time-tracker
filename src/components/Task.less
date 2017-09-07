@@ -1,20 +1,25 @@
 .root {
-  margin: 24px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 600px;
+  width: 100%;
 }
 
 .controls {
   display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin: 6px;
   transition-delay: 2s;
+  width: 20%;
+
 }
 
 .info {
   display: flex;
-  margin: 6px;
+  margin: 12px;
   align-items: center;
   justify-content: space-between;
   width: 75%;
@@ -32,15 +37,46 @@
 .name {
   font-size: larger;
   font-weight: bolder;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 25%;
 }
 
 .description {
   font-size: small;
-  margin: 16px;
+  margin: 8px;
+  text-align: left;
+  overflow: hidden;
+  width: 60%;
+  text-align: justify;
+  position: relative;
+  max-height: 3.2em;
+  margin-right: -1em;
+  padding-right: 1em;
+}
+
+.description:before {
+  content: '...';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.description:after {
+  content: '';
+  position: absolute;
+  right: 0;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.2em;
+  background: white;
 }
 
 .duration {
-  font-size: small;
+  text-align: right;
+  width: 15%;
 }
 
 .delete {

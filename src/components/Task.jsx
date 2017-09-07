@@ -62,15 +62,14 @@ export default class Task extends Component {
     render() {
       const paperStyle = {
         height: '64px',
-        width: '100%',
+        width: '95%',
         margin: '8px',
         display: 'flex',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center',
       };
       const checkbox = {
-        display: 'flex',
-        alignSelf: 'center'
+        width: '36px'
       }
       const deleteStyle = {
         opacity: '1',
@@ -86,9 +85,9 @@ export default class Task extends Component {
               >
                 <div className={style.root}>
                     <div className={ isComplete ? style.infogrey : style.info }>
-                      <span className={style.name}>{name}</span>
-                      <span className={style.description}>{description}</span>
-                      <span className={style.duration}>{duration(time)}</span>
+                      <p className={style.name}>{name}</p>
+                      <p className={style.description}>{description}</p>
+                      <p className={style.duration}>{duration(time)}</p>
                     </div>
                     <div className={style.controls}>
                       <IconButton
