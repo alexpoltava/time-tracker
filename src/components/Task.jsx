@@ -69,7 +69,7 @@ export default class Task extends Component {
         alignItems: 'center',
       };
       const checkbox = {
-        width: '24px'
+        width: '36px'
       }
       const button = {
         padding: '0'

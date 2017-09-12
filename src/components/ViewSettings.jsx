@@ -3,7 +3,9 @@ import SelectField from 'material-ui/SelectField';
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
-import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import NoteAdd from 'material-ui/svg-icons/action/note-add';
+import Delete from 'material-ui/svg-icons/action/delete';
 
 import { connect } from 'react-redux';
 
@@ -11,16 +13,33 @@ import { UPDATE_SETTINGS, action } from '../actions'
 import { defaultCategories, DEFAULT_CATEGORIES_NUMBER } from '../config/constants';
 
 const style = {
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '24px',
+    width: '90%'
+  },
   container: {
-    'display': 'flex',
-    'flexDirection': 'column',
-    'width': '300px'
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%'
+  },
+  checkbox: {
+    maxWidth: '250px',
   },
   hr: {
-    'width': '300px',
-    'backgroundColor': 'lightgrey',
-    'border': 'none',
-    'height': '1px'
+    width: '100%',
+    backgroundColor: 'lightgrey',
+    border: 'none',
+    height: '1px'
+  },
+  addNew: {
+    margin: '12px',
+    width: '120px',
+  },
+  delete: {
+    margin: '12px',
+    width: '120px',
   }
 };
 
@@ -60,22 +79,17 @@ export default class ViewSettings extends Component {
         return;
       }
 
-      const existingIndex = this.props.categories.findIndex(cat => cat.name === this.state.categoryName);
-      if(existingIndex !== -1) { // category already exists
-        const categories = this.props.categories.map((cat, i) =>
-          i === existingIndex ? { ...cat, isRemoved: false } : cat);
-        this.setState({ categoryName: '' },
-          this.handleUpdateSettings({ categories }));
-      } else { // add new category
-        const index = this.props.categories.length + DEFAULT_CATEGORIES_NUMBER;
-        const categories = [...this.props.categories, {
-            id: index,
+      const categories = this.props.categories.find(cat => cat.name === this.state.categoryName)
+      ? this.props.categories.map(cat =>
+          cat.name === this.state.categoryName ? { ...cat, isRemoved: false } : cat)
+      : [...this.props.categories, {
+            id: this.props.categories.length + DEFAULT_CATEGORIES_NUMBER,
             name: this.state.categoryName,
             isRemoved: false
           }];
-        this.setState({ categoryName: '' },
-          this.handleUpdateSettings({ categories }));
-      }
+      this.setState({ categoryName: '' },
+            this.handleUpdateSettings({ categories }));
+
     }
 
     handleRemoveCategory = () => {
@@ -93,13 +107,14 @@ export default class ViewSettings extends Component {
 
     render() {
         return (
-            <div style={{margin: '8px'}}>
+            <div style={style.root}>
                 <h2>Settings</h2>
                 <div style={style.container}>
                   <Checkbox
                     label="Hide completed tasks"
                     disabled={this.props.readOnly}
                     checked={this.props.hideCompleted}
+                    style={style.checkbox}
                     onCheck={this.handleHideCompletedChange}
                   />
                 <br />
@@ -114,14 +129,15 @@ export default class ViewSettings extends Component {
                       value={this.state.categoryName}
                       onChange={this.handleChangeCategory}
                     />
-                  <IconButton label="Add"
-                      iconClassName="material-icons"
+                  <RaisedButton label="Add"
+                      backgroundColor='#00E676'
+                      icon={<NoteAdd />}
                       disabled={!this.state.categoryName}
-                      tooltip="Add new category"
+                      label="add"
+                      style={style.addNew}
+                      overlayStyle={{textAlign: 'left'}}
                       onTouchTap={this.handleAddCategory}
-                  >
-                    note_add
-                  </IconButton>
+                  />
                   </div>
                   <div style={{display: 'flex', flexDirection: 'row'}}>
                     <SelectField
@@ -135,14 +151,15 @@ export default class ViewSettings extends Component {
                       )
                     }
                     </SelectField>
-                    <IconButton label="Remove"
-                      iconClassName="material-icons"
+                    <RaisedButton label="Remove"
+                      icon={<Delete />}
                       disabled={!this.state.category}
-                      tooltip="Delete category"
+                      label="delete"
+                      secondary
+                      style={style.delete}
+                      overlayStyle={{textAlign: 'left'}}
                       onTouchTap={this.handleRemoveCategory}
-                    >
-                      delete
-                    </IconButton>
+                    />
                   </div>
                 </div>
                 <span></span>
