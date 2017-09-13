@@ -17,7 +17,6 @@ const style = {
     display: 'flex',
     flexDirection: 'column',
     margin: '24px',
-    width: '90%'
   },
   container: {
     display: 'flex',

@@ -50,7 +50,8 @@ module.exports = {
             'process.env': {
                 NODE_ENV: JSON.stringify(NODE_ENV)
             }
-        })
+        }),
+        new webpack.NamedModulesPlugin()
     ],
     devServer: {
         historyApiFallback: true
