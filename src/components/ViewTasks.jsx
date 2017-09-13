@@ -13,7 +13,7 @@ export default class ViewTasks extends Component {
     }
 
     handleChange = (filter) => {
-      this.setState({...filter});
+      this.setState(filter);
     }
 
     render() {

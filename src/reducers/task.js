@@ -35,23 +35,26 @@ export const tasks = (state = initialState, action) => {
         case TASK_ADDED: {
             return {
                 ...state,
-                list: Object.assign({}, state.list, { [action.payload.key]: action.payload.val })
+                list: { ...state.list, [action.payload.key]: action.payload.val }
             };
         }
 
         case TASK_UPDATED: {
             return {
                 ...state,
-                list: Object.assign({}, state.list, { [action.payload.key]: action.payload.val })
+                list: { ...state.list, [action.payload.key]: action.payload.val }
             };
         }
 
         case TASK_REMOVED: {
-            const newList = Object.assign({}, state.list);
-            delete newList[action.payload.key];
             return {
                 ...state,
-                list: newList
+                list: Object.keys(state.list).filter(task => task !== action.payload.key)
+                        .reduce((newList, task) => {
+                            newList[task] = state.list[task];
+                            return newList;
+                          },
+                      {})
             };
         }
 

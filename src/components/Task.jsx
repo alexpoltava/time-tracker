@@ -37,7 +37,7 @@ export default class Task extends Component {
     handleStop = () => {
       const { id, uid } = this.props;
       const periods = [...this.props.periods.slice(0, -1),
-        Object.assign(...this.props.periods.slice(-1), {dateComplete: +Date.now()})];
+        { ...this.props.periods.slice(-1)[0], dateComplete: +Date.now() }];
       this.props.stop(id, { uid, periods });
     }
 
