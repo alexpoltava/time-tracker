@@ -18,7 +18,7 @@ export default class Sidebar extends Component {
         return (
             <div className={style.root}>
                 <h2>Total logged:</h2>
-                <h2>{duration(this.props.timers.reduce((prev, curr) => prev + curr.time, 0))}</h2>
+                <h2>{duration(this.props.timers.reduce((prev, curr) => prev + Math.floor(curr.time), 0))}</h2>
                 <span>with {pluralize('tasks', this.props.timers.length, true)}</span>
                 <Menu onSelectMenuItem={this.props.onSelectMenuItem} />
             </div>
