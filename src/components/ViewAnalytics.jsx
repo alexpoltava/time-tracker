@@ -36,19 +36,18 @@ export default class ViewAnalytics extends Component {
 
     getTotalTime = (periods) => {
       const { dateFrom, dateTo } = this.state;
-      return periods.reduce((total, period) => {
-              // console.log(period);
-              const start = ((period.dateStart < dateFrom) && ((period.dateComplete || Date.now()) > dateFrom))
-              ? dateFrom
-              : period.dateStart;
-              // console.log(start);
-              const finish = ((period.dateStart < dateTo) && ((period.dateComplete || Date.now()) > dateTo))
-              ? dateTo
-              : period.dateComplete || Date.now();
-              // console.log(finish);
-              return total + (finish - start);
-            }
-        , 0)
+      return periods
+        ? periods.reduce((total, period) => {
+                const start = ((period.dateStart < dateFrom) && ((period.dateComplete || Date.now()) > dateFrom))
+                ? dateFrom
+                : period.dateStart;
+                const finish = ((period.dateStart < dateTo) && ((period.dateComplete || Date.now()) > dateTo))
+                ? dateTo
+                : period.dateComplete || Date.now();
+                return total + (finish - start);
+              }
+          , 0)
+        : 0;
     };
 
     updateData = () => {
@@ -60,11 +59,10 @@ export default class ViewAnalytics extends Component {
               : item)
           : [...result, { category: list[el].category, time: this.getTotalTime(list[el].periods) }]
         , []);
-      const totalTime = data.reduce((sum, el) => sum + el.time, 0);
       this.setState({
         data: data.map(el => ({
             name: categories.find(cat => cat.id === el.category).name,
-            y: el.time / totalTime * 100
+            y: el.time
         }))
       });
     }

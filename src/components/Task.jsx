@@ -5,6 +5,10 @@ import IconButton from 'material-ui/IconButton';
 import Checkbox from 'material-ui/Checkbox';
 import Paper from 'material-ui/Paper';
 import duration from './utils/duration';
+import Replay from 'material-ui/svg-icons/av/replay';
+import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
+import Pause from 'material-ui/svg-icons/av/pause';
+import Delete from 'material-ui/svg-icons/action/delete-forever';
 
 import style from './Task.less';
 
@@ -96,31 +100,28 @@ export default class Task extends Component {
                     </div>
                     <div className={style.controls}>
                       <IconButton
-                          iconClassName="material-icons"
                           tooltip="Reset"
                           disabled={(!this.props.isPaused) || isComplete || this.props.readOnly}
                           style={button}
                           onClick={this.handleReset}
                       >
-                        replay
+                        <Replay />
                       </IconButton>
                       <IconButton
-                          iconClassName="material-icons"
                           disabled={isComplete || this.props.readOnly}
                           tooltip="Start"
-                          style={this.props.isPaused ? button : {...button, ...{ 'display': 'none' }}}
+                          style={this.props.isPaused ? button : { ...button, display: 'none' }}
                           onClick={this.handleStart}
                       >
-                        play_arrow
+                        <PlayArrow />
                       </IconButton>
                       <IconButton
-                          iconClassName="material-icons"
                           disabled={isComplete || this.props.readOnly}
                           tooltip="Stop"
-                          style={this.props.isPaused ? {...button, ...{ 'display': 'none' }} : button}
+                          style={this.props.isPaused ? { ...button, display: 'none' } : button}
                           onClick={this.handleStop}
                       >
-                        pause
+                        <Pause />
                       </IconButton>
                       <Checkbox
                           style={checkbox}
@@ -130,15 +131,14 @@ export default class Task extends Component {
                           onCheck={this.handleComplete}
                       />
                       <IconButton
-                          iconClassName="material-icons"
                           disabled={this.props.readOnly}
-                          className='delete'
-                          iconStyle={{iconHoverColor: 'red'}}
-                          style={!this.state.isHovered ? {...deleteStyle, ...{'visibility':'hidden', 'opacity':'0'}} : deleteStyle}
                           tooltip="Delete task"
+                          style={!this.state.isHovered ? { ...deleteStyle, visibility: 'hidden', opacity: '0' } : deleteStyle }
                           onClick={this.handleDelete}
                       >
-                        delete
+                        <Delete
+                          hoverColor='red'
+                        />
                       </IconButton>
                   </div>
                 </div>

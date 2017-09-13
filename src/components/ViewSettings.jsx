@@ -48,7 +48,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  updateSettings: (params) => dispatch(action(UPDATE_SETTINGS, {...params}))
+  updateSettings: (params) => dispatch(action(UPDATE_SETTINGS, params))
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
