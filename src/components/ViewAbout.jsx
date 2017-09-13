@@ -5,6 +5,7 @@ export default class ViewAbout extends Component {
         return (
             <div>
                 <h2>About</h2>
+                <a href="https://github.com/alexpoltava/time-tracker" target="_blank">GitHub</a>
             </div>
         );
     }

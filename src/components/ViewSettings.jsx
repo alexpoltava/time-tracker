@@ -4,7 +4,7 @@ import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import NoteAdd from 'material-ui/svg-icons/action/note-add';
+import Add from 'material-ui/svg-icons/content/add';
 import Delete from 'material-ui/svg-icons/action/delete';
 
 import { connect } from 'react-redux';
@@ -130,7 +130,7 @@ export default class ViewSettings extends Component {
                     />
                   <RaisedButton label="Add"
                       backgroundColor='#00E676'
-                      icon={<NoteAdd />}
+                      icon={<Add />}
                       disabled={!this.state.categoryName}
                       label="add"
                       style={style.addNew}
