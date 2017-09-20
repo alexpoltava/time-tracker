@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
 
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import ExpandMore from 'material-ui/svg-icons/navigation/expand-more';
+import Avatar from 'material-ui/Avatar';
+
 import { firebaseAuth } from '../config/constants';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
@@ -27,8 +35,8 @@ const mapStateToProps = state => ({
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={ props => {
-      return rest.auth
-          ? <Component {...props}/>
+        return rest.auth
+          ? <Component {...props} isMenuOpen={rest.isMenuOpen} />
           : rest.isRestoringAuth
             ? <CircularProgress size={80} thickness={5} />
             : <Redirect to={{
@@ -38,7 +46,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   }} />
 );
 
-const NavMenu = ({ props }) => (
+const NavMenu = (props) => (
     <nav className={styles.nav}>
         <div className={styles.links}>
           <NavLink exact to={'/'} style={{textDecoration:'none', color: props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Home</NavLink>
@@ -51,35 +59,58 @@ const NavMenu = ({ props }) => (
             : null
           }
         </div>
-        {
-          props.isLoggedIn
-          ? props.isLoggingOut
-            ? <CircularProgress />
-            : <div>
-                <span>{props.user.email}</span>
-                <span style={{fontSize: 'small', color: 'red'}}>{props.user.emailVerified ? null : '   unverified email'}</span>
-                <RaisedButton
-                  className={styles.links}
-                  onClick={props.logout}
-                >
-                  Logout
-                </RaisedButton>
-              </div>
-          : <div className={styles.links}>
-              <NavLink to={'/login'} style={{textDecoration:'none', color: props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Login</NavLink> {' | '}
-              <NavLink to={'/register'} style={{textDecoration:'none', color: props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Register</NavLink>
-            </div>
-        }
     </nav>
+);
+
+const LoginRegister = ({ muiTheme }) =>
+          <div className={styles.links}>
+          <NavLink to={'/login'} style={{textDecoration:'none', color: muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Login</NavLink> {' | '}
+          <NavLink to={'/register'} style={{textDecoration:'none', color: muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Register</NavLink>
+        </div>;
+
+const Logged = ({ logout, user }) => (
+  <IconMenu
+    iconButtonElement={
+      <FlatButton
+        label={<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', textTransform: 'none'}}><Avatar style={{margin: '8px'}} src={user.photoURL || user.providerData[0].photoURL} /><span>{user.providerData[0].displayName || user.email}</span><ExpandMore /></div>}
+        labelStyle={{display: 'flex', flexDirection: 'row', alignItems: 'center', textTransform: 'none'}}
+        style={{height: '56px'}}
+      >
+      </FlatButton>
+    }
+    targetOrigin={{horizontal: 'right', vertical: 'top'}}
+    anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+  >
+    <MenuItem
+      primaryText="Logout"
+      onClick={logout}
+    />
+  </IconMenu>
 );
 
 @withRouter
 @connect(mapStateToProps, { logout })
 class App extends Component {
+    state = {
+      isMenuOpen: true
+    }
+
+    onShowHideMenu = () => {
+      this.setState({ isMenuOpen: !this.state.isMenuOpen });
+    }
+
     render() {
         return (
             <div className={styles.app}>
-                <NavMenu props={this.props} />
+                <AppBar
+                  title={<NavLink exact to={'/'} style={{textDecoration:'none', fontFamily: 'cursive', color: this.props.muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Time-tracker</NavLink>}
+                  titleStyle={{textAlign: 'left'}}
+                  showMenuIconButton={this.props.isLoggedIn}
+                  iconElementRight={this.props.isLoggedIn
+                      ? <Logged  logout={this.props.logout} user={this.props.user} />
+                      : <LoginRegister muiTheme={this.props.muiTheme}/>}
+                  onLeftIconButtonTouchTap={this.onShowHideMenu}
+                />
                 <div className={styles.content}>
                   <Switch>
                     <Route exact path="/" component={Home} />
@@ -89,6 +120,7 @@ class App extends Component {
                       path="/dashboard/:uid"
                       auth={this.props.isLoggedIn}
                       isRestoringAuth={this.props.isRestoringAuth}
+                      isMenuOpen={this.state.isMenuOpen}
                       component={Dashboard}
                     />
                   </Switch>

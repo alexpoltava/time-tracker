@@ -39,7 +39,10 @@ export default class Dashboard extends Component {
     render() {
         return (
             <div className={styles.root}>
-                <Sidebar onSelectMenuItem={this.onSelectMenuItem} />
+                <Sidebar
+                  isMenuOpen={this.props.isMenuOpen}
+                  onSelectMenuItem={this.onSelectMenuItem}
+                />
                 <View
                   menuItem={this.state.menuItem}
                   uid={this.props.match.params.uid}

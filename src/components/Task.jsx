@@ -34,14 +34,15 @@ export default class Task extends Component {
 
     handleStart = () => {
       const { id, uid } = this.props;
-      const periods = [...this.props.periods, {dateStart: +Date.now()}];
+      const periods = [...this.props.periods, { dateStart: +Date.now() }];
       this.props.start(id, {  uid, periods });
     }
 
     handleStop = () => {
       const { id, uid } = this.props;
-      const periods = [...this.props.periods.slice(0, -1),
-        { ...this.props.periods.slice(-1)[0], dateComplete: +Date.now() }];
+      const periods = this.props.periods.map(el =>
+        el.dateComplete ? el : {...el, dateComplete: +Date.now()}
+      );
       this.props.stop(id, { uid, periods });
     }
 

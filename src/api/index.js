@@ -1,19 +1,20 @@
 import { ref, firebaseAuth } from '../config/constants';
 
 // /////////////// database operations //////////////////////////
-const dbWriteUserData = (email, uid, emailSent) => (
+const dbWriteUserData = (email, uid, emailSent, displayName = null, photoURL = null) => (
     ref.child(`users/${uid}/info`)
       .set({
           email,
           uid,
-          emailSent
+          emailSent,
+          displayName,
+          photoURL,
       })
 );
 
 const isUserExist = uid => ref(`users/${uid}`).key;
 
 const dbAddNewTask = (payload) => {
-    // const uid = firebaseAuth().currentUser.uid;
     const tasks = ref.child(`users/${payload.uid}/tasks`);
     const newTask = tasks.push();
     newTask.set({ id: newTask.key, ...payload });
@@ -36,7 +37,6 @@ const dbFetchTasks = () => {
 };
 
 const dbTaskRemove = (payload) => {
-    // const uid = firebaseAuth().currentUser.uid;
     const task = ref.child(`users/${payload.uid}/tasks/${payload.key}`);
     return task.remove();
 };
@@ -56,15 +56,14 @@ const resetPassword = email => firebaseAuth().sendPasswordResetEmail(email);
 const saveUser = (user) => {
     if (user.emailVerified === false) {
         return user.sendEmailVerification()
-          .then(() => dbWriteUserData(user.email, user.uid, true))
+          .then(() => dbWriteUserData(user.email, user.uid, true, user.displayName, user.photoURL))
           .catch(err => console.error(err.message));
     }
-    return dbWriteUserData(user.email, user.uid, false);
+    return dbWriteUserData(user.email, user.uid, false, user.displayName, user.photoURL);
 };
 
 const register = (payload) => {
     const { email, pw } = payload;
-    const credential = firebaseAuth.EmailAuthProvider.credential(email, pw);
     return firebaseAuth().createUserWithEmailAndPassword(email, pw);
 };
 

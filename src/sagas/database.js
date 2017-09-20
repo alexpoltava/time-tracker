@@ -23,16 +23,16 @@ function* addTask(action) {
     }
 }
 
-function* waitUpdateTask() {
-    yield takeEvery(UPDATE_TASK, updateTask);
-}
-
 function* updateTask(action) {
     try {
         yield call(api.dbUpdateTask, action.payload);
     } catch (error) {
         console.error(error);
     }
+}
+
+function* waitUpdateTask() {
+    yield takeEvery(UPDATE_TASK, updateTask);
 }
 
 function* updateSettings(action) {
