@@ -113,7 +113,15 @@ class App extends Component {
                 />
                 <div className={styles.content}>
                   <Switch>
-                    <Route exact path="/" component={Home} />
+                    <Route exact path="/" render={() =>
+                        this.props.isLoggedIn
+                        ? (
+                          <Redirect to={`/dashboard/${this.props.uid}`} />
+                          )
+                        : (
+                          <Home />
+                          )
+                    } />
                     <Route path="/login" component={Login} />
                     <Route path="/register" component={Register} />
                     <PrivateRoute
