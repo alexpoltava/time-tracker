@@ -46,27 +46,12 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   }} />
 );
 
-const NavMenu = (props) => (
-    <nav className={styles.nav}>
-        <div className={styles.links}>
-          <NavLink exact to={'/'} style={{textDecoration:'none', color: props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Home</NavLink>
-          {
-            props.isLoggedIn
-            ? <span>
-                {' | '}
-                <NavLink to={`/dashboard/${props.uid}`} style={{textDecoration:'none', color: props.muiTheme.palette.textColor}} activeStyle={{fontWeight: 'bold'}}>Dashboard</NavLink>
-              </span>
-            : null
-          }
-        </div>
-    </nav>
-);
-
-const LoginRegister = ({ muiTheme }) =>
+const LoginRegister = ({ muiTheme }) => (
           <div className={styles.links}>
-          <NavLink to={'/login'} style={{textDecoration:'none', color: muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Login</NavLink> {' | '}
-          <NavLink to={'/register'} style={{textDecoration:'none', color: muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Register</NavLink>
-        </div>;
+            <NavLink to={'/login'} style={{textDecoration:'none', color: muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Login</NavLink> {' | '}
+            <NavLink to={'/register'} style={{textDecoration:'none', color: muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Register</NavLink>
+          </div>
+);
 
 const Logged = ({ logout, user }) => (
   <IconMenu
@@ -113,15 +98,13 @@ class App extends Component {
                 />
                 <div className={styles.content}>
                   <Switch>
-                    <Route exact path="/" render={() =>
+                    <Route
+                      exact path="/"
+                      render={() =>
                         this.props.isLoggedIn
-                        ? (
-                          <Redirect to={`/dashboard/${this.props.uid}`} />
-                          )
-                        : (
-                          <Home />
-                          )
-                    } />
+                        ? <Redirect to={`/dashboard/${this.props.uid}`} />
+                        : <Home />}
+                    />
                     <Route path="/login" component={Login} />
                     <Route path="/register" component={Register} />
                     <PrivateRoute
