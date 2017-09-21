@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import AddBox from 'material-ui/svg-icons/content/add-box';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
@@ -163,7 +164,9 @@ class AddTask extends Component {
         return (
             <div className={styles.root}>
                 <RaisedButton
+                    backgroundColor='#00E676'
                     label='Add new task'
+                    icon={<AddBox />}
                     disabled={this.state.showAddDialog || this.props.readOnly}
                     onTouchTap={this.handleOpen}
                 />
