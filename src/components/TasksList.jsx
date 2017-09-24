@@ -29,6 +29,10 @@ export default class TaskList extends Component {
       this.props.removeTask(payload);
     }
 
+    onClick = (id) => {
+      console.log(id);
+    }
+
     render() {
       const { list, filter, isFetching, timers } = this.props;
         return (
@@ -57,6 +61,7 @@ export default class TaskList extends Component {
                     reset={this.props.reset}
                     onDelete={this.onDelete}
                     onUpdate={this.props.onUpdate}
+                    onClick={this.onClick}
                     isComplete={item.isComplete}
                     uid={this.props.uid}
                     readOnly={this.props.readOnly}

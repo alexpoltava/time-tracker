@@ -32,6 +32,10 @@ export default class Task extends Component {
         this.setState({isHovered: false});
     }
 
+    handleClick = () => {
+        this.props.onClick(this.props.id)
+    }
+
     handleStart = () => {
       const { id, uid } = this.props;
       const periods = [...this.props.periods, { dateStart: +Date.now() }];
@@ -92,6 +96,7 @@ export default class Task extends Component {
                 zDepth={2 + this.state.isHovered}
                 onMouseOver={this.handleMouseOver}
                 onMouseOut={this.handleMouseOut}
+                onClick={this.handleClick}
               >
                 <div className={style.root}>
                     <div className={ isComplete ? style.infogrey : style.info }>
