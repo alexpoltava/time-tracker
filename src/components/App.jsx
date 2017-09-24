@@ -97,9 +97,24 @@ class App extends Component {
                 <Media minDeviceWidth={SMALL_SCREEN}>
                   {(match) =>
                     <AppBar
-                      title={<NavLink exact to={'/'} style={{textDecoration:'none', fontFamily: 'cursive', color: this.props.muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Time-tracker</NavLink>}
-                      titleStyle={{textAlign: match ? 'left' : 'center'}}
-                      style={{width: this.state.isMenuOpen && this.props.isLoggedIn ? '75%' : '100%'}}
+                      title={<NavLink
+                                  exact to={'/'}
+                                  style={{
+                                    color: this.props.muiTheme.palette.alternateTextColor,
+                                    fontFamily: 'cursive',
+                                    textDecoration:'none',
+                                  }}
+                                  activeStyle={{fontWeight: 'bold'}}
+                              >
+                                Time-tracker
+                              </NavLink>}
+                      titleStyle={{
+                        textAlign: match ? 'left' : 'center',
+                        fontSize: match ? '24px' : '48px',
+                      }}
+                      style={{
+                        width: this.state.isMenuOpen && this.props.isLoggedIn ? '75%' : '100%',
+                      }}
                       showMenuIconButton={this.props.isLoggedIn}
                       iconElementRight={this.props.isLoggedIn
                           ? match ? <Logged logout={this.props.logout} user={this.props.user} /> : null
