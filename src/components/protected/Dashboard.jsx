@@ -6,7 +6,7 @@ import Sidebar from '../Sidebar.jsx';
 import View from '../View.jsx';
 import { connect } from 'react-redux';
 
-import { action, CHANGE_DBSYNC_UID } from '../../actions'
+import { action, logout, CHANGE_DBSYNC_UID } from '../../actions'
 
 import styles from './Dashboard.less';
 
@@ -15,7 +15,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    changeDBSyncUID: (uid) => dispatch(action(CHANGE_DBSYNC_UID, {uid}))
+    changeDBSyncUID: (uid) => dispatch(action(CHANGE_DBSYNC_UID, {uid})),
+    logout: () => dispatch(logout())
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -39,14 +40,18 @@ export default class Dashboard extends Component {
     }
 
     handleSelectMenuItemAndClose = (item) => {
-        this.setState({ menuItem: item });
-        this.props.onRequestCloseMenu();
+      if(item === 5) {
+          this.props.logout();
+      } else {
+          this.setState({ menuItem: item });
+      }
+      this.props.onRequestCloseMenu();
     }
 
     render() {
         return (
             <div className={styles.root}>
-                <Media minWidth={SMALL_SCREEN}>
+                <Media minDeviceWidth={SMALL_SCREEN}>
                   {(match) =>
                     <Sidebar
                       isMenuOpen={this.props.isMenuOpen}

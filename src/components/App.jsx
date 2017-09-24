@@ -94,7 +94,7 @@ class App extends Component {
     render() {
         return (
             <div className={styles.app}>
-                <Media minWidth={SMALL_SCREEN}>
+                <Media minDeviceWidth={SMALL_SCREEN}>
                   {(match) =>
                     <AppBar
                       title={<NavLink exact to={'/'} style={{textDecoration:'none', fontFamily: 'cursive', color: this.props.muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Time-tracker</NavLink>}

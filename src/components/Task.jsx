@@ -102,12 +102,12 @@ export default class Task extends Component {
               >
                 <div className={style.root}>
                     <div className={ isComplete ? style.infogrey : style.info }>
-                      <Media minWidth={SMALL_SCREEN}>
+                      <Media minDeviceWidth={SMALL_SCREEN}>
                         {(match) =>
                             <p className={style.name} style={{width: match ? null : '100%'}}>{name}</p>
                         }
                       </Media>
-                      <Media minWidth={SMALL_SCREEN}>
+                      <Media minDeviceWidth={SMALL_SCREEN}>
                         <p className={style.description}>{description}</p>
                       </Media>
                       <p className={style.duration}>{duration(time)}</p>

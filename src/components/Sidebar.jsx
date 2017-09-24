@@ -18,7 +18,7 @@ const mapStateToProps = state => ({
 export default class Sidebar extends Component {
     render() {
         return (
-          <Media minWidth={SMALL_SCREEN}>
+          <Media minDeviceWidth={SMALL_SCREEN}>
             {(match) =>
               <Drawer
                 openSecondary={true}

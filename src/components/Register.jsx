@@ -97,7 +97,7 @@ export default class Register extends Component {
       }
 
       return (
-        <Media minWidth={SMALL_SCREEN}>
+        <Media minDeviceWidth={SMALL_SCREEN}>
           {(match) =>
             <div className={styles.componentStyle}>
               <Paper className={styles.paperStyle} style={{width: match ? null : '100%'}}>
