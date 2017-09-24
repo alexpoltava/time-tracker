@@ -17,6 +17,7 @@ const style = {
     display: 'flex',
     flexDirection: 'column',
     margin: '24px',
+    width: '70%'
   },
   container: {
     display: 'flex',
@@ -106,7 +107,7 @@ export default class ViewSettings extends Component {
 
     render() {
         return (
-            <div style={style.root}>
+            <div style={{...style.root, width: this.props.isMenuOpen ? '70%' : '95%'}}>
                 <h2>Settings</h2>
                 <div style={style.container}>
                   <Checkbox

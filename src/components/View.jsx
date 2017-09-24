@@ -9,22 +9,26 @@ export default class View extends Component {
     render() {
         switch (this.props.menuItem) {
             case 2: {
-                return <ViewAnalytics />;
+                return <ViewAnalytics
+                          isMenuOpen={this.props.isMenuOpen}
+                        />;
             }
             case 3: {
-                return (<ViewSettings
-                  uid={this.props.uid}
-                  readOnly={this.props.readOnly}
-                />);
+                return <ViewSettings
+                          isMenuOpen={this.props.isMenuOpen}
+                          uid={this.props.uid}
+                          readOnly={this.props.readOnly}
+                        />;
             }
             case 4: {
                 return <ViewAbout />;
             }
             default: {
-                return (<ViewTasks
-                  uid={this.props.uid}
-                  readOnly={this.props.readOnly}
-                />);
+                return  <ViewTasks
+                          isMenuOpen={this.props.isMenuOpen}
+                          uid={this.props.uid}
+                          readOnly={this.props.readOnly}
+                        />;
             }
         }
     }

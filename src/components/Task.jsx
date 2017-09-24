@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Media from 'react-responsive';
+import { SMALL_SCREEN } from '../config/constants'
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
@@ -100,8 +102,14 @@ export default class Task extends Component {
               >
                 <div className={style.root}>
                     <div className={ isComplete ? style.infogrey : style.info }>
-                      <p className={style.name}>{name}</p>
-                      <p className={style.description}>{description}</p>
+                      <Media minWidth={SMALL_SCREEN}>
+                        {(match) =>
+                            <p className={style.name} style={{width: match ? null : '100%'}}>{name}</p>
+                        }
+                      </Media>
+                      <Media minWidth={SMALL_SCREEN}>
+                        <p className={style.description}>{description}</p>
+                      </Media>
                       <p className={style.duration}>{duration(time)}</p>
                     </div>
                     <div className={style.controls}>

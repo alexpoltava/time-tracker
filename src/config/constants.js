@@ -22,3 +22,4 @@ export const defaultCategories = [
     { id: 5, name: 'Other' }
 ];
 export const DEFAULT_CATEGORIES_NUMBER = defaultCategories.length + 1;
+export const SMALL_SCREEN = '768px';

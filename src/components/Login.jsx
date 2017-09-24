@@ -7,6 +7,9 @@ import FlatButton from 'material-ui/FlatButton';
 import CircularProgress from 'material-ui/CircularProgress';
 import GoogleButton from 'react-google-button'
 
+import Media from 'react-responsive';
+import { SMALL_SCREEN } from '../config/constants';
+
 import { login, loginWithGoogleAccount } from '../actions';
 
 import styles from './LoginRegister.less';
@@ -75,60 +78,67 @@ export default class Login extends Component {
           return <Redirect to={from} />
         }
         return (
-            <div className={styles.componentStyle}>
-                <Paper className={styles.paperStyle}>
-                  <span className={styles.inputStyle}>Log in with e-mail</span>
-                  <TextField
-                      hintText="e-mail"
-                      errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
-                      name="Email"
-                      className={styles.inputStyle}
-                      value={this.state.email}
-                      onChange={this.handleEmailChange}
-                  />
-                  <TextField
-                      hintText="password"
-                      errorText={this.state.isPasswordValid ? '' : 'password is required'}
-                      name="Password"
-                      className={styles.inputStyle}
-                      type="password"
-                      value={this.state.password}
-                      onChange={this.handlePaswordChange}
-                  />
-                  <span className={styles.inputStyle}
-                        style={{
-                                color: 'red',
-                                display: `${this.props.error === null ? 'none': 'block'}`,
-                                fontSize: 'small',
-                                textAlign: 'left'
-                              }}
-                  >
-                    {this.props.error ? this.props.error : null}
-                  </span>
+          <Media minWidth={SMALL_SCREEN}>
+            {(match) =>
+              <div className={styles.componentStyle}>
+                  <Paper className={styles.paperStyle} style={{width: match ? null : '100%'}}>
+                    <span className={styles.inputStyle}>Log in with e-mail</span>
+                    <TextField
+                        hintText="e-mail"
+                        errorText={this.state.isEmailValid ? '' : 'e-mail is required'}
+                        name="Email"
+                        className={styles.inputStyle}
+                        style={{width: '80%'}}
+                        type="email"
+                        value={this.state.email}
+                        onChange={this.handleEmailChange}
+                    />
+                    <TextField
+                        hintText="password"
+                        errorText={this.state.isPasswordValid ? '' : 'password is required'}
+                        name="Password"
+                        className={styles.inputStyle}
+                        style={{width: '80%'}}
+                        type="password"
+                        value={this.state.password}
+                        onChange={this.handlePaswordChange}
+                    />
+                    <span className={styles.inputStyle}
+                          style={{
+                                  color: 'red',
+                                  display: `${this.props.error === null ? 'none': 'block'}`,
+                                  fontSize: 'small',
+                                  textAlign: 'left'
+                                }}
+                    >
+                      {this.props.error ? this.props.error : null}
+                    </span>
+                    {
+                      this.props.isLoggingIn === true
+                      ? <CircularProgress />
+                      : <FlatButton
+                          className={styles.btnLogin}
+                          label="Login"
+                          disabled={this.props.isLoggedIn}
+                          primary={true}
+                          style={{margin: '16px'}}
+                          onTouchTap={this.handleLogin}
+                        />
+                    }
+                  </Paper>
                   {
-                    this.props.isLoggingIn === true
+                    this.props.isLoggingWithGoogleIn === true
                     ? <CircularProgress />
-                    : <FlatButton
-                        className={styles.btnLogin}
-                        label="Login"
+                    : <GoogleButton
+                        className={styles.btnGoogle}
+                        type='light'
                         disabled={this.props.isLoggedIn}
-                        primary={true}
-                        style={{margin: '16px'}}
-                        onTouchTap={this.handleLogin}
+                        onClick={this.handleLoginWithGoogleAccount}
                       />
                   }
-                </Paper>
-                {
-                  this.props.isLoggingWithGoogleIn === true
-                  ? <CircularProgress />
-                  : <GoogleButton
-                      className={styles.btnGoogle}
-                      type='light'
-                      disabled={this.props.isLoggedIn}
-                      onClick={this.handleLoginWithGoogleAccount}
-                    />
-                }
-            </div>
+              </div>
+            }
+          </Media>
         );
     }
 }

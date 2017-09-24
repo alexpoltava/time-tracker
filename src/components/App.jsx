@@ -23,6 +23,9 @@ import { logout } from '../actions';
 import { withRouter } from 'react-router-dom';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 
+import Media from 'react-responsive';
+import { SMALL_SCREEN } from '../config/constants';
+
 import styles from './App.less';
 
 const mapStateToProps = state => ({
@@ -36,7 +39,7 @@ const mapStateToProps = state => ({
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={ props => {
         return rest.auth
-          ? <Component {...props} isMenuOpen={rest.isMenuOpen} />
+          ? <Component {...props} isMenuOpen={rest.isMenuOpen} onRequestCloseMenu={rest.onRequestCloseMenu}/>
           : rest.isRestoringAuth
             ? <CircularProgress size={80} thickness={5} />
             : <Redirect to={{
@@ -84,18 +87,27 @@ class App extends Component {
       this.setState({ isMenuOpen: !this.state.isMenuOpen });
     }
 
+    onRequestCloseMenu = () => {
+      this.setState({ isMenuOpen: false });
+    }
+
     render() {
         return (
             <div className={styles.app}>
-                <AppBar
-                  title={<NavLink exact to={'/'} style={{textDecoration:'none', fontFamily: 'cursive', color: this.props.muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Time-tracker</NavLink>}
-                  titleStyle={{textAlign: 'left'}}
-                  showMenuIconButton={this.props.isLoggedIn}
-                  iconElementRight={this.props.isLoggedIn
-                      ? <Logged  logout={this.props.logout} user={this.props.user} />
-                      : <LoginRegister muiTheme={this.props.muiTheme}/>}
-                  onLeftIconButtonTouchTap={this.onShowHideMenu}
-                />
+                <Media minWidth={SMALL_SCREEN}>
+                  {(match) =>
+                    <AppBar
+                      title={<NavLink exact to={'/'} style={{textDecoration:'none', fontFamily: 'cursive', color: this.props.muiTheme.palette.alternateTextColor}} activeStyle={{fontWeight: 'bold'}}>Time-tracker</NavLink>}
+                      titleStyle={{textAlign: match ? 'left' : 'center'}}
+                      style={{width: this.state.isMenuOpen && this.props.isLoggedIn ? '75%' : '100%'}}
+                      showMenuIconButton={this.props.isLoggedIn}
+                      iconElementRight={this.props.isLoggedIn
+                          ? match ? <Logged logout={this.props.logout} user={this.props.user} /> : null
+                          : <LoginRegister muiTheme={this.props.muiTheme}/>}
+                      onLeftIconButtonTouchTap={this.onShowHideMenu}
+                    />
+                  }
+                </Media>
                 <div className={styles.content}>
                   <Switch>
                     <Route
@@ -112,6 +124,7 @@ class App extends Component {
                       auth={this.props.isLoggedIn}
                       isRestoringAuth={this.props.isRestoringAuth}
                       isMenuOpen={this.state.isMenuOpen}
+                      onRequestCloseMenu={this.onRequestCloseMenu}
                       component={Dashboard}
                     />
                   </Switch>

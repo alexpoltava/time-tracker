@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Media from 'react-responsive';
+import { SMALL_SCREEN } from '../../config/constants';
 
 import Sidebar from '../Sidebar.jsx';
 import View from '../View.jsx';
@@ -32,18 +34,28 @@ export default class Dashboard extends Component {
       }
     }
 
-    onSelectMenuItem = (item) => {
+    handleSelectMenuItem = (item) => {
         this.setState({ menuItem: item });
+    }
+
+    handleSelectMenuItemAndClose = (item) => {
+        this.setState({ menuItem: item });
+        this.props.onRequestCloseMenu();
     }
 
     render() {
         return (
             <div className={styles.root}>
-                <Sidebar
-                  isMenuOpen={this.props.isMenuOpen}
-                  onSelectMenuItem={this.onSelectMenuItem}
-                />
+                <Media minWidth={SMALL_SCREEN}>
+                  {(match) =>
+                    <Sidebar
+                      isMenuOpen={this.props.isMenuOpen}
+                      onSelectMenuItem={match ? this.handleSelectMenuItem : this.handleSelectMenuItemAndClose}
+                    />
+                  }
+                </Media>
                 <View
+                  isMenuOpen={this.props.isMenuOpen}
                   menuItem={this.state.menuItem}
                   uid={this.props.match.params.uid}
                   readOnly={this.props.loggedinUID !== this.props.match.params.uid}

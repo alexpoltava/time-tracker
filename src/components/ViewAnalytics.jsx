@@ -9,7 +9,7 @@ const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const style = {
   root: {
-    width: '60%'
+    width: '70%'
   }
 };
 
@@ -77,7 +77,7 @@ export default class ViewAnalytics extends Component {
 
     render() {
         return (
-            <div style={style.root}>
+            <div style={{...style.root, width: this.props.isMenuOpen ? '70%' : '95%'}}>
                 <h2>Analytics</h2>
                 <DatePicker
                     autoOk
