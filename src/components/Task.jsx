@@ -73,9 +73,10 @@ export default class Task extends Component {
     render() {
       const paperStyle = {
         height: '64px',
-        width: '95%',
+        width: '100%',
         margin: '8px',
         display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
       };
@@ -91,7 +92,7 @@ export default class Task extends Component {
         opacity: '1',
         transition: 'opacity 0.5s linear 0.5s'
       };
-      const { id, name, description, isComplete, time } = this.props;
+      const { id, name, description, category, isComplete, time } = this.props;
         return (
               <Paper
                 style={paperStyle}
@@ -100,61 +101,71 @@ export default class Task extends Component {
                 onMouseOut={this.handleMouseOut}
                 onClick={this.handleClick}
               >
-                <div className={style.root}>
-                    <div className={ isComplete ? style.infogrey : style.info }>
-                      <Media minDeviceWidth={SMALL_SCREEN}>
-                        {(match) =>
-                            <p className={style.name} style={{width: match ? null : '100%'}}>{name}</p>
-                        }
-                      </Media>
-                      <Media minDeviceWidth={SMALL_SCREEN}>
-                        <p className={style.description}>{description}</p>
-                      </Media>
-                      <p className={style.duration}>{duration(time)}</p>
-                    </div>
-                    <div className={style.controls}>
-                      <IconButton
-                          tooltip="Reset"
-                          disabled={(!this.props.isPaused) || isComplete || this.props.readOnly}
-                          style={button}
-                          onClick={this.handleReset}
+                  <Media minDeviceWidth={SMALL_SCREEN}>
+                    {(match) => (
+                      <div
+                        className={ isComplete ? style.infogrey : style.info }
+                        style={{width: match ? '90%' : '35%'}}
                       >
-                        <Replay />
-                      </IconButton>
-                      <IconButton
-                          disabled={isComplete || this.props.readOnly}
-                          tooltip="Start"
-                          style={this.props.isPaused ? button : { ...button, display: 'none' }}
-                          onClick={this.handleStart}
-                      >
-                        <PlayArrow />
-                      </IconButton>
-                      <IconButton
-                          disabled={isComplete || this.props.readOnly}
-                          tooltip="Stop"
-                          style={this.props.isPaused ? { ...button, display: 'none' } : button}
-                          onClick={this.handleStop}
-                      >
-                        <Pause />
-                      </IconButton>
-                      <Checkbox
-                          style={checkbox}
-                          inputStyle={checkbox}
-                          disabled={this.props.readOnly}
-                          checked={isComplete}
-                          onCheck={this.handleComplete}
+                        <p className={style.name}>{name}</p>
+                        <p
+                          className={style.description}
+                          style={{display: match ? 'block' : 'none'}}
+                        >
+                          {description}
+                        </p>
+                        <p
+                          style={{width: '100px', display: match ? 'block' : 'none'}}
+                        >
+                          {category}
+                        </p>
+                        <p className={style.duration}>{duration(time)}</p>
+                      </div>
+                      )
+                    }
+                  </Media>
+                  <div className={style.controls}>
+                    <IconButton
+                        tooltip="Reset"
+                        disabled={(!this.props.isPaused) || isComplete || this.props.readOnly}
+                        style={button}
+                        onClick={this.handleReset}
+                    >
+                      <Replay />
+                    </IconButton>
+                    <IconButton
+                        disabled={isComplete || this.props.readOnly}
+                        tooltip="Start"
+                        style={this.props.isPaused ? button : { ...button, display: 'none' }}
+                        onClick={this.handleStart}
+                    >
+                      <PlayArrow />
+                    </IconButton>
+                    <IconButton
+                        disabled={isComplete || this.props.readOnly}
+                        tooltip="Stop"
+                        style={this.props.isPaused ? { ...button, display: 'none' } : button}
+                        onClick={this.handleStop}
+                    >
+                      <Pause />
+                    </IconButton>
+                    <Checkbox
+                        style={checkbox}
+                        inputStyle={checkbox}
+                        disabled={this.props.readOnly}
+                        checked={isComplete}
+                        onCheck={this.handleComplete}
+                    />
+                    <IconButton
+                        disabled={this.props.readOnly}
+                        tooltip="Delete task"
+                        style={!this.state.isHovered ? { ...deleteStyle, visibility: 'hidden', opacity: '0' } : deleteStyle }
+                        onClick={this.handleDelete}
+                    >
+                      <Delete
+                        hoverColor='red'
                       />
-                      <IconButton
-                          disabled={this.props.readOnly}
-                          tooltip="Delete task"
-                          style={!this.state.isHovered ? { ...deleteStyle, visibility: 'hidden', opacity: '0' } : deleteStyle }
-                          onClick={this.handleDelete}
-                      >
-                        <Delete
-                          hoverColor='red'
-                        />
-                      </IconButton>
-                  </div>
+                    </IconButton>
                 </div>
             </Paper>
         )

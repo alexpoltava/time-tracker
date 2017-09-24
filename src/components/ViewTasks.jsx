@@ -18,7 +18,7 @@ export default class ViewTasks extends Component {
 
     render() {
         return (
-            <div className={styles.root} style={{width: this.props.isMenuOpen ? '70%' : '95%'}}>
+            <div className={styles.root} style={{width: this.props.isMenuOpen ? '70%' : '100%'}}>
                 <AddTask
                   uid={this.props.uid}
                   readOnly={this.props.readOnly}

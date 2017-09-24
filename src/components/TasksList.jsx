@@ -5,10 +5,12 @@ import Task from './Task.jsx';
 
 import { action, UPDATE_TASK } from '../actions';
 import { removeTask } from '../actions';
+import { defaultCategories } from '../config/constants';
 
 import styles from './TasksList.less';
 
 const mapStateToProps = state => ({
+    categories: [...defaultCategories, ...state.settings.categories],
     list: state.tasks.list,
     isFetching: state.tasks.isFetching,
     timers: state.timers,
@@ -49,6 +51,7 @@ export default class TaskList extends Component {
                     key={key}
                     id={item.id}
                     name={item.name}
+                    category={this.props.categories.find(cat => cat.id === item.category).name}
                     description={item.description}
                     dateStart={item.dateStart || 0}
                     dateComplete={item.dateComplete || 0}

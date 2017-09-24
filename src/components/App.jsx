@@ -110,10 +110,10 @@ class App extends Component {
                               </NavLink>}
                       titleStyle={{
                         textAlign: match ? 'left' : 'center',
-                        fontSize: match ? '24px' : '48px',
                       }}
                       style={{
                         width: this.state.isMenuOpen && this.props.isLoggedIn ? '75%' : '100%',
+                        alignItems: 'center'
                       }}
                       showMenuIconButton={this.props.isLoggedIn}
                       iconElementRight={this.props.isLoggedIn
