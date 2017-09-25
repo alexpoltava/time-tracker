@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
 import Media from 'react-responsive';
 import { SMALL_SCREEN } from '../../config/constants';
 
 import Sidebar from '../Sidebar.jsx';
 import View from '../View.jsx';
+import TaskPage from './TaskPage.jsx';
 import { connect } from 'react-redux';
 
 import { action, logout, CHANGE_DBSYNC_UID } from '../../actions'
@@ -59,6 +61,10 @@ export default class Dashboard extends Component {
                     />
                   }
                 </Media>
+                <Route
+                  path={`${this.props.match.url}/:task`}
+                  component={TaskPage}
+                />
                 <View
                   isMenuOpen={this.props.isMenuOpen}
                   menuItem={this.state.menuItem}

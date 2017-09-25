@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import CircularProgress from 'material-ui/CircularProgress';
 import Task from './Task.jsx';
 
@@ -26,13 +27,14 @@ const mapDispatchToProps = dispatch => ({
     });
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class TaskList extends Component {
     onDelete = (payload) => {
       this.props.removeTask(payload);
     }
 
     onClick = (id) => {
-      console.log(id);
+      this.props.history.push(`${this.props.match.url}/${id}`);
     }
 
     render() {
