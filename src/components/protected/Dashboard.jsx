@@ -1,18 +1,32 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Media from 'react-responsive';
+import { connect } from 'react-redux';
+
 import { SMALL_SCREEN } from '../../config/constants';
+import { defaultCategories } from '../../config/constants';
 
 import Sidebar from '../Sidebar.jsx';
 import View from '../View.jsx';
 import TaskPage from './TaskPage.jsx';
-import { connect } from 'react-redux';
 
 import { action, logout, CHANGE_DBSYNC_UID } from '../../actions'
 
 import styles from './Dashboard.less';
 
+const FadingBlock = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={props => {
+      const task = props.match.params.task;
+      const list = rest.list;
+      const item = list[task];
+      const category = item ? rest.categories.find(cat => cat.id === item.category).name : null;
+      return <Component {...props} {...{uid: rest.uid, item, category}} />
+  }}/>
+);
+
 const mapStateToProps = state => ({
+    categories: [...defaultCategories, ...state.settings.categories],
+    list: state.tasks.list,
     loggedinUID: state.session.user.uid,
 });
 
@@ -61,8 +75,11 @@ export default class Dashboard extends Component {
                     />
                   }
                 </Media>
-                <Route
+                <FadingBlock
                   path={`${this.props.match.url}/:task`}
+                  categories={this.props.categories}
+                  list={this.props.list}
+                  uid={this.props.match.params.uid}
                   component={TaskPage}
                 />
                 <View

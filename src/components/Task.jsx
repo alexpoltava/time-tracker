@@ -34,8 +34,8 @@ export default class Task extends Component {
         this.setState({isHovered: false});
     }
 
-    handleClick = () => {
-        this.props.onClick(this.props.id)
+    handleDoubleClick = () => {
+        this.props.onDoubleClick(this.props.id)
     }
 
     handleStart = () => {
@@ -99,7 +99,7 @@ export default class Task extends Component {
                 zDepth={2 + this.state.isHovered}
                 onMouseOver={this.handleMouseOver}
                 onMouseOut={this.handleMouseOut}
-                onClick={this.handleClick}
+                onDoubleClick={this.handleDoubleClick}
               >
                   <Media minDeviceWidth={SMALL_SCREEN}>
                     {(match) => (

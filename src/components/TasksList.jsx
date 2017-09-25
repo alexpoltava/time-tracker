@@ -33,8 +33,10 @@ export default class TaskList extends Component {
       this.props.removeTask(payload);
     }
 
-    onClick = (id) => {
-      this.props.history.push(`${this.props.match.url}/${id}`);
+    onDoubleClick = (id) => {
+      const { match, history } = this.props;
+      const url = match.url;
+      history.push(`${url}${url.endsWith("/") ? "" : "/"}${id}`);
     }
 
     render() {
@@ -66,7 +68,7 @@ export default class TaskList extends Component {
                     reset={this.props.reset}
                     onDelete={this.onDelete}
                     onUpdate={this.props.onUpdate}
-                    onClick={this.onClick}
+                    onDoubleClick={this.onDoubleClick}
                     isComplete={item.isComplete}
                     uid={this.props.uid}
                     readOnly={this.props.readOnly}
