@@ -94,6 +94,7 @@ export default class Task extends Component {
       };
       const { id, name, description, category, isComplete, time } = this.props;
         return (
+            <div className="root">
               <Paper
                 style={paperStyle}
                 zDepth={2 + this.state.isHovered}
@@ -168,6 +169,7 @@ export default class Task extends Component {
                     </IconButton>
                 </div>
             </Paper>
+          </div>
         )
     }
 }

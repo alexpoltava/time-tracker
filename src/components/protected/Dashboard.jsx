@@ -14,13 +14,13 @@ import { action, logout, CHANGE_DBSYNC_UID } from '../../actions'
 
 import styles from './Dashboard.less';
 
-const FadingBlock = ({ component: Component, ...rest }) => (
+const SlidingBlock = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => {
       const task = props.match.params.task;
       const list = rest.list;
       const item = list[task];
       const category = item ? rest.categories.find(cat => cat.id === item.category).name : null;
-      return <Component {...props} {...{uid: rest.uid, item, category}} />
+      return <Component {...props} {...{uid: rest.uid, isMenuOpen: rest.isMenuOpen, item, category}} />;
   }}/>
 );
 
@@ -75,8 +75,9 @@ export default class Dashboard extends Component {
                     />
                   }
                 </Media>
-                <FadingBlock
+                <SlidingBlock
                   path={`${this.props.match.url}/:task`}
+                  isMenuOpen={this.props.isMenuOpen}
                   categories={this.props.categories}
                   list={this.props.list}
                   uid={this.props.match.params.uid}

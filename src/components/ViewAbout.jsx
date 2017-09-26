@@ -5,7 +5,7 @@ import FontAwesome from 'react-fontawesome';
 export default class ViewAbout extends Component {
     render() {
         return (
-            <div>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'left', margin: '12px'}}>
                 <h2>About</h2>
                 <a href="https://github.com/alexpoltava/time-tracker" target="_blank">
                     <FontAwesome

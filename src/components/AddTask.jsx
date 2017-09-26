@@ -10,6 +10,7 @@ import TimePicker from 'material-ui/TimePicker';
 import SelectField from 'material-ui/SelectField';
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
+import Snackbar from 'material-ui/Snackbar';
 
 import { addTask } from '../actions';
 import { defaultCategories } from '../config/constants';
@@ -24,6 +25,7 @@ const mapStateToProps = (state) => ({
 class AddTask extends Component {
     state = {
       showAddDialog: false,
+      openSB: false,
       name: '',
       isNameValid: true,
       tagsString: '',
@@ -34,7 +36,7 @@ class AddTask extends Component {
       dateTimeComplete: null,
       isPaused: false,
       isDateValid: true,
-      isComplete: false
+      isComplete: false,
     }
 
     handleOpen = () => {
@@ -144,9 +146,11 @@ class AddTask extends Component {
             isComplete,
             uid: this.props.uid,
         });
-        this.setState({showAddDialog: false});
+        this.setState({showAddDialog: false, openSB: true});
       }
     }
+
+    handleRequestCloseSB = () => { this.setState({ openSB: false })}
 
     render() {
         const actions = [
@@ -257,6 +261,12 @@ class AddTask extends Component {
                     />
                   </div>
                 </Dialog>
+                <Snackbar
+                  open={this.state.openSB}
+                  message={`New task ${this.state.name} was added to your list`}
+                  autoHideDuration={2000}
+                  onRequestClose={this.handleRequestCloseSB}
+                />
             </div>
         );
     }
