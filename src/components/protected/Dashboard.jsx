@@ -20,7 +20,7 @@ const SlidingBlock = ({ component: Component, ...rest }) => (
       const list = rest.list;
       const item = list[task];
       const category = item ? rest.categories.find(cat => cat.id === item.category).name : null;
-      return <Component {...props} {...{uid: rest.uid, isMenuOpen: rest.isMenuOpen, item, category}} />;
+      return <Component {...props} {...{uid: rest.uid, isMenuOpen: rest.isMenuOpen, categories: rest.categories, item, category,}} />;
   }}/>
 );
 

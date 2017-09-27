@@ -74,6 +74,7 @@ export default class TaskList extends Component {
                       id={item.id}
                       name={item.name}
                       category={this.props.categories.find(cat => cat.id === item.category).name}
+                      tagsArray={item.tagsArray}
                       description={item.description}
                       dateStart={item.dateStart || 0}
                       dateComplete={item.dateComplete || 0}

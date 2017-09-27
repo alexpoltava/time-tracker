@@ -92,9 +92,9 @@ export default class Task extends Component {
         opacity: '1',
         transition: 'opacity 0.5s linear 0.5s'
       };
-      const { id, name, description, category, isComplete, time } = this.props;
+      const { id, name, description, category, tagsArray, isComplete, time } = this.props;
         return (
-            <div className="root">
+            <div className={style.root}>
               <Paper
                 style={paperStyle}
                 zDepth={2 + this.state.isHovered}
@@ -115,11 +115,18 @@ export default class Task extends Component {
                         >
                           {description}
                         </p>
-                        <p
-                          style={{width: '100px', display: match ? 'block' : 'none'}}
-                        >
-                          {category}
-                        </p>
+                        <div style={{display: 'flex', flexDirection: 'column', display: match ? 'flex' : 'none'}}>
+                          <p className={style.category}>
+                            {category}
+                          </p>
+                          <p className={style.tags}>
+                            {
+                              tagsArray
+                              ? tagsArray.map((tag, i) => <span key={i}>#{tag} </span>)
+                              : null
+                            }
+                          </p>
+                        </div>
                         <p className={style.duration}>{duration(time)}</p>
                       </div>
                       )

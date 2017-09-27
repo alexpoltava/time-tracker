@@ -1,29 +1,98 @@
 import React, { Component } from 'react';
 import { CSSTransitionGroup } from 'react-transition-group';
+import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import CircularProgress from 'material-ui/CircularProgress';
 import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
+
+import { action, UPDATE_TASK } from '../../actions';
 
 import '../../assets/animations.css';
 import Timeline from './Timeline.jsx';
 
 import { defaultCategories } from '../../config/constants';
 
+const mapDispatchToProps = dispatch => ({
+        updateTask: (id, params) => dispatch(action(UPDATE_TASK, { key: id, ...params })),
+    });
+
+@connect(null, mapDispatchToProps)
 export default class TaskPage extends Component {
     state = {
-        testItems: ['one', 'two', 'three']
+      name: '',
+      description: '',
+      category: 0,
+      tagsString: '',
+      isComplete: false,
+      isTagsValid: true,
+      isNameValid: true,
     }
 
-    handleAddItem = () => {
+    syncStateWithProps = (item) => {
+      const { name, description, category, tagsArray, isComplete } = item;
       this.setState({
-        testItems: [...this.state.testItems, 'test']
+        name,
+        description,
+        category,
+        tagsString: this.tagsArrayToString(tagsArray),
+        isComplete,
       });
     }
 
-    handleRemoveItem = (i) => {
-      this.setState({
-        testItems: this.state.testItems.filter((el, index) => index !== i)
-      });
+    componentWillReceiveProps(nextProps) {
+      nextProps.item
+      ? this.syncStateWithProps(nextProps.item)
+      : null;
+    }
+
+    handleNameChange = (e) => {
+      this.setState({ name: e.target.value, isNameValid: true });
+    }
+
+    tagsStringToArray = (str) => str.replace(/[\s,;.]/g, '').split('#').filter(el => el !== '');
+
+    tagsArrayToString = (arr) => arr.map(tag => `#${tag}`).join(' ');
+
+    handleTagsChange = (e) => {
+      this.setState({ tagsString: e.target.value, isTagsValid: true });
+    }
+
+    handleDescriptionChange = (e) => {
+      this.setState({ description: e.target.value});
+    }
+
+    handleCategoryChange = (event, index, value) => this.setState({category: value});
+
+    handleCompleteChange = () => this.setState({
+      isComplete: !this.state.isComplete
+    })
+
+    validateInput = () => {
+      let isInputValid = true;
+      if (this.state.name === '') {
+          this.setState({ isNameValid: false });
+          isInputValid = false;
+      }
+      return isInputValid;
+    }
+
+    handleUpdate = () => {
+      if (this.validateInput()) {
+        const { name, description, category, tagsString, isComplete } = this.state;
+        const tagsArray = this.tagsStringToArray(tagsString);
+        this.props.updateTask(this.props.item.id, {
+            name,
+            description,
+            category,
+            tagsArray,
+            isComplete,
+          }
+        );
+      }
     }
 
     handleHide = () => {
@@ -32,9 +101,6 @@ export default class TaskPage extends Component {
     }
 
     render() {
-        const items = this.state.testItems.map((el, index) => (
-          <div key={index} onClick={() => this.handleRemoveItem(index)}>{el}</div>
-        ));
         const style = {
             root: {
                 display: 'flex',
@@ -75,28 +141,39 @@ export default class TaskPage extends Component {
                         id="name"
                         floatingLabelText="Task name"
                         floatingLabelFixed
-                        value={item.name}
+                        errorText={this.state.isNameValid ? '' : 'Task name is required'}
+                        value={this.state.name}
+                        onChange={this.handleNameChange}
                       /><br />
                       <TextField
                         id="description"
                         floatingLabelText="Task description"
                         floatingLabelFixed
-                        value={item.description}
+                        value={this.state.description}
+                        onChange={this.handleDescriptionChange}
                       /><br />
-                      <TextField
-                        id="category"
-                        disabled
-                        floatingLabelText="Task category"
+                      <SelectField
+                        autoWidth={true}
+                        floatingLabelText="Category"
                         floatingLabelFixed
-                        value={category}
-                      /><br />
+                        value={this.state.category}
+                        onChange={this.handleCategoryChange}
+                      >
+                      {
+                        this.props.categories.map(cat=>
+                        <MenuItem key={cat.id} value={cat.id} primaryText={cat.name} />
+                        )
+                      }
+                      </SelectField><br />
                     </div>
                     <div style={style.column}>
                       <TextField
                         id="tags"
                         floatingLabelText="Task tags"
                         floatingLabelFixed
-                        value={item.tags}
+                        errorText={this.state.isTagsValid ? '' : 'Input is not valid'}
+                        value={this.state.tagsString}
+                        onChange={this.handleTagsChange}
                       /><br />
                       <TextField
                         id="started"
@@ -105,16 +182,21 @@ export default class TaskPage extends Component {
                         floatingLabelFixed
                         value={new Date(item.periods[0].dateStart)}
                       /><br />
-                      <TextField
+                    <Checkbox
                         id="completed"
-                        disabled
-                        floatingLabelText="Task completed"
-                        floatingLabelFixed
-                        value={item.isComplete ? 'yes' : 'no'}
+                        label="Task completed"
+                        checked={this.state.isComplete}
+                        style={{marginTop: '36px'}}
+                        onCheck={this.handleCompleteChange}
                       /><br />
                     </div>
                   </div>
                   <Timeline />
+                  <RaisedButton
+                    label="update"
+                    onClick={this.handleUpdate}
+                    style={style.hideButton}
+                  />
                   <RaisedButton
                     label="hide"
                     icon={<ArrowDropUp />}
@@ -123,23 +205,9 @@ export default class TaskPage extends Component {
                   />
               </div>
               </CSSTransitionGroup>
-            : <CSSTransitionGroup
-                  transitionName="fading"
-                  transitionAppear={true}
-                  transitionAppearTimeout={500}
-                  transitionEnter={false}
-                  transitionLeave={false}
-              >
-                <div key={1}>
-                    <h3>No data...</h3>
-                    <RaisedButton
-                      label="hide"
-                      icon={<ArrowDropUp />}
-                      onClick={this.handleHide}
-                      style={style.hideButton}
-                    />
-                </div>
-              </CSSTransitionGroup>
+            : <div style={style.root}>
+                  <CircularProgress />
+              </div>
         );
     }
 }
