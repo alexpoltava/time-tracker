@@ -23,28 +23,33 @@ const mapDispatchToProps = dispatch => ({
 @connect(null, mapDispatchToProps)
 export default class TaskPage extends Component {
     state = {
+      id: '',
       name: '',
       description: '',
       category: 0,
       tagsString: '',
-      isComplete: false,
-      isTagsValid: true,
       isNameValid: true,
     }
 
     syncStateWithProps = (item) => {
-      const { name, description, category, tagsArray, isComplete } = item;
+      const { id, name, description, category, tagsArray } = item;
       this.setState({
+        id,
         name,
         description,
         category,
-        tagsString: this.tagsArrayToString(tagsArray),
-        isComplete,
+        tagsString: this.tagsArrayToString(tagsArray || []),
       });
     }
 
+    componentDidMount() {
+      this.props.item
+      ? this.syncStateWithProps(this.props.item)
+      : null;
+    }
+
     componentWillReceiveProps(nextProps) {
-      nextProps.item
+      nextProps.item && (this.state.id !== nextProps.item.id)
       ? this.syncStateWithProps(nextProps.item)
       : null;
     }
@@ -67,10 +72,6 @@ export default class TaskPage extends Component {
 
     handleCategoryChange = (event, index, value) => this.setState({category: value});
 
-    handleCompleteChange = () => this.setState({
-      isComplete: !this.state.isComplete
-    })
-
     validateInput = () => {
       let isInputValid = true;
       if (this.state.name === '') {
@@ -82,14 +83,15 @@ export default class TaskPage extends Component {
 
     handleUpdate = () => {
       if (this.validateInput()) {
-        const { name, description, category, tagsString, isComplete } = this.state;
+        const { name, description, category, tagsString } = this.state;
+        const { uid } = this.props;
         const tagsArray = this.tagsStringToArray(tagsString);
         this.props.updateTask(this.props.item.id, {
             name,
             description,
             category,
             tagsArray,
-            isComplete,
+            uid,
           }
         );
       }
@@ -115,9 +117,16 @@ export default class TaskPage extends Component {
             column: {
                 margin: '12px',
             },
+            buttonBox: {
+              display: 'flex',
+              flexDirection: 'row',
+              alignSelf: 'flex-end',
+            },
+            updateButton: {
+              margin: '12px',
+            },
             hideButton: {
                 margin: '12px',
-                alignSelf: 'flex-end',
             }
           };
         const { category, item } = this.props;
@@ -139,6 +148,7 @@ export default class TaskPage extends Component {
                     <div style={style.column}>
                       <TextField
                         id="name"
+                        disabled={this.props.readOnly}
                         floatingLabelText="Task name"
                         floatingLabelFixed
                         errorText={this.state.isNameValid ? '' : 'Task name is required'}
@@ -147,6 +157,7 @@ export default class TaskPage extends Component {
                       /><br />
                       <TextField
                         id="description"
+                        disabled={this.props.readOnly}
                         floatingLabelText="Task description"
                         floatingLabelFixed
                         value={this.state.description}
@@ -154,6 +165,7 @@ export default class TaskPage extends Component {
                       /><br />
                       <SelectField
                         autoWidth={true}
+                        disabled={this.props.readOnly}
                         floatingLabelText="Category"
                         floatingLabelFixed
                         value={this.state.category}
@@ -169,9 +181,9 @@ export default class TaskPage extends Component {
                     <div style={style.column}>
                       <TextField
                         id="tags"
+                        disabled={this.props.readOnly}
                         floatingLabelText="Task tags"
                         floatingLabelFixed
-                        errorText={this.state.isTagsValid ? '' : 'Input is not valid'}
                         value={this.state.tagsString}
                         onChange={this.handleTagsChange}
                       /><br />
@@ -185,24 +197,28 @@ export default class TaskPage extends Component {
                     <Checkbox
                         id="completed"
                         label="Task completed"
-                        checked={this.state.isComplete}
+                        checked={this.props.isComplete}
+                        disabled
                         style={{marginTop: '36px'}}
-                        onCheck={this.handleCompleteChange}
                       /><br />
                     </div>
                   </div>
                   <Timeline />
-                  <RaisedButton
-                    label="update"
-                    onClick={this.handleUpdate}
-                    style={style.hideButton}
-                  />
-                  <RaisedButton
-                    label="hide"
-                    icon={<ArrowDropUp />}
-                    onClick={this.handleHide}
-                    style={style.hideButton}
-                  />
+                  <div style={style.buttonBox}>
+                    <RaisedButton
+                      label="update"
+                      backgroundColor="#FFEA00"
+                      disabled={this.props.readOnly || !this.state.isNameValid}
+                      style={style.updateButton}
+                      onClick={this.handleUpdate}
+                    />
+                    <RaisedButton
+                      label="hide"
+                      icon={<ArrowDropUp />}
+                      style={style.hideButton}
+                      onClick={this.handleHide}
+                    />
+                  </div>
               </div>
               </CSSTransitionGroup>
             : <div style={style.root}>
