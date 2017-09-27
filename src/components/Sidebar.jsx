@@ -29,7 +29,10 @@ export default class Sidebar extends Component {
                 <div className={style.root}>
                     <h2>Total logged:</h2>
                     <h2>{duration(this.props.timers.reduce((prev, curr) => prev + Math.floor(curr.time), 0))}</h2>
-                    <span>with {pluralize('tasks', this.props.timers.length, true)}</span>
+                    <span>
+                      {`with ${pluralize('tasks', this.props.timers.length, true)}
+                      (${this.props.timers.filter(timer => timer.status === 'RUNNING').length} running)`}
+                    </span>
                     <Menu onSelectMenuItem={this.props.onSelectMenuItem} />
                 </div>
               </Drawer>
