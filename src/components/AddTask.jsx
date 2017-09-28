@@ -12,13 +12,20 @@ import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import Snackbar from 'material-ui/Snackbar';
 
+import { createSelector } from 'reselect'
+
 import { addTask } from '../actions';
 import { defaultCategories } from '../config/constants';
 
 import styles from './AddTask.less';
 
+const getCategories = createSelector(
+  state => state.settings.categories.filter(cat => !cat.isRemoved),
+  activeCustomCategories => [...defaultCategories, ...activeCustomCategories]
+);
+
 const mapStateToProps = (state) => ({
-  categories: [...defaultCategories, ...state.settings.categories.filter(cat => !cat.isRemoved)]
+  categories: getCategories(state)
 });
 
 @connect(mapStateToProps, { addTask })
