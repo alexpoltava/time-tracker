@@ -8,6 +8,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import CircularProgress from 'material-ui/CircularProgress';
 import ArrowDropUp from 'material-ui/svg-icons/navigation/arrow-drop-up';
+import moment from 'moment';
 
 import { action, UPDATE_TASK } from '../../actions';
 
@@ -15,6 +16,8 @@ import '../../assets/animations.css';
 import Timeline from './Timeline.jsx';
 
 import { defaultCategories } from '../../config/constants';
+
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const mapDispatchToProps = dispatch => ({
         updateTask: (id, params) => dispatch(action(UPDATE_TASK, { key: id, ...params })),
@@ -29,16 +32,18 @@ export default class TaskPage extends Component {
       category: 0,
       tagsString: '',
       isNameValid: true,
+      data: [],
     }
 
     syncStateWithProps = (item) => {
-      const { id, name, description, category, tagsArray } = item;
+      const { id, name, description, category, tagsArray, periods } = item;
       this.setState({
         id,
         name,
         description,
         category,
         tagsString: this.tagsArrayToString(tagsArray || []),
+        data: this.updateData(periods),
       });
     }
 
@@ -53,6 +58,29 @@ export default class TaskPage extends Component {
       ? this.syncStateWithProps(nextProps.item)
       : null;
     }
+
+    createDaysArray = (start, end) => {
+      const array = [];
+      for(let i = start; i <= end; i += MILLISECONDS_PER_DAY) {
+          array.push(i);
+      }
+      return array;
+    }
+
+    updateData = (periods) => {
+      return periods.reduce((result, period) => {
+          const dateStart = period.dateStart;
+          const dateComplete = period.dateComplete || +new Date();
+          const days = this.createDaysArray(moment(dateStart).startOf('day'), moment(dateComplete).startOf('day'));
+          const dailyTime = days.map(day => {
+            const end = (dateComplete > moment(day).endOf('day')) ? moment(day).endOf('day') : dateComplete;
+            const start = (dateStart < day) ? day : dateStart;;
+            return [+new Date(day), (end - start) / (60 * 60 * 1000)];
+          });
+          return [...result, ...dailyTime];
+        }, []);
+    }
+
 
     handleNameChange = (e) => {
       this.setState({ name: e.target.value, isNameValid: true });
@@ -203,7 +231,10 @@ export default class TaskPage extends Component {
                       /><br />
                     </div>
                   </div>
-                  <Timeline />
+                  <Timeline
+                    data={this.state.data}
+                    id={this.state.id}
+                  />
                   <div style={style.buttonBox}>
                     <RaisedButton
                       label="update"
