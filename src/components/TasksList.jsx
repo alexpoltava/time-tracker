@@ -10,22 +10,40 @@ import { action, UPDATE_TASK } from '../actions';
 import { removeTask } from '../actions';
 import { defaultCategories } from '../config/constants';
 
+import { createSelector } from 'reselect';
+
 import styles from './TasksList.less';
 import '../assets/animations.css';
 
-const mapStateToProps = state => ({
-    categories: [...defaultCategories, ...state.settings.categories],
+const customCategories = state => state.settings.categories;
+const getCategories = createSelector(
+  customCategories,
+  customCategories => [...defaultCategories, ...customCategories]
+);
+
+const getSettingsHideCompleted = state => state.settings.hideCompleted;
+
+const getList = (state, props) => {
+  const list = state.tasks.list;
+  return Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(props.filter.value.toLowerCase()) : false)
+    .filter(key => (list[key].category === props.filter.category) || !props.filter.category).filter(key => (state.settings.hideCompleted ? (!list[key].isComplete) : true)).reverse();
+}
+
+const getProcessedList = createSelector(
+  getList,
+  getList => getList
+);
+
+const mapStateToProps = (state, props) => ({
+    categories: getCategories(state),
     list: state.tasks.list,
+    processedList: getProcessedList(state, props),
     isFetching: state.tasks.isFetching,
     timers: state.timers,
-    hideCompleted: state.settings.hideCompleted,
 });
 
 const mapDispatchToProps = dispatch => ({
         removeTask: (key) => dispatch(removeTask(key)),
-        start: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: false, ...params })),
-        stop: (id, params) => dispatch(action(UPDATE_TASK, { key: id, isPaused: true, ...params })),
-        reset: (id, params) => dispatch(action(UPDATE_TASK, { key: id, periods: [], ...params })),
         onUpdate: (id, params) =>  dispatch(action(UPDATE_TASK, { key: id, ...params })),
     });
 
@@ -63,35 +81,36 @@ export default class TaskList extends Component {
                     transitionLeaveTimeout={500}
                     style={{width: '100%'}}
                 >{
-                  Object.keys(list).filter(key => list[key].name ? list[key].name.toLowerCase().includes(filter.value.toLowerCase()) : false)
-                  .filter(key => (list[key].category === filter.category) || !filter.category)
-                  .filter(key => (this.props.hideCompleted ? (!list[key].isComplete) : true))
-                  .reverse().map(key => {
+                  this.props.processedList.map(key => {
                     const item = list[key];
                     const timer = timers.find(timer => (timer.id === key));
-                    return (<Task
-                      key={key}
-                      id={item.id}
-                      name={item.name}
-                      category={this.props.categories.find(cat => cat.id === item.category).name}
-                      tagsArray={item.tagsArray}
-                      description={item.description}
-                      dateStart={item.dateStart || 0}
-                      dateComplete={item.dateComplete || 0}
-                      periods={item.periods || 0}
-                      isPaused={item.isPaused}
-                      time={timer.time}
-                      status={timer.status}
-                      start={this.props.start}
-                      stop={this.props.stop}
-                      reset={this.props.reset}
-                      onDelete={this.onDelete}
-                      onUpdate={this.props.onUpdate}
-                      onDoubleClick={this.onDoubleClick}
-                      isComplete={item.isComplete}
-                      uid={this.props.uid}
-                      readOnly={this.props.readOnly}
-                    />);
+                    const category = this.props.categories.find(cat => cat.id === item.category);
+                    return (item
+                      ? <Task
+                          key={key}
+                          id={item.id}
+                          name={item.name}
+                          category={category ? category.name : null}
+                          tagsArray={item.tagsArray}
+                          description={item.description}
+                          dateStart={item.dateStart || 0}
+                          dateComplete={item.dateComplete || 0}
+                          periods={item.periods || 0}
+                          isPaused={item.isPaused}
+                          time={timer.time}
+                          status={timer.status}
+                          start={this.props.start}
+                          stop={this.props.stop}
+                          reset={this.props.reset}
+                          onDelete={this.onDelete}
+                          updateTask={this.props.onUpdate}
+                          onDoubleClick={this.onDoubleClick}
+                          isComplete={item.isComplete}
+                          uid={this.props.uid}
+                          readOnly={this.props.readOnly}
+                        />
+                      : null
+                    );
                     }
                   )
                  }

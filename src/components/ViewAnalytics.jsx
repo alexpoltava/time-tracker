@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PieChart from './PieChart.jsx'
 import DatePicker from 'material-ui/DatePicker';
+import { createSelector } from 'reselect';
+
 import { defaultCategories } from '../config/constants';
 
 
@@ -13,9 +15,15 @@ const style = {
   }
 };
 
+const customCategories = state => state.settings.categories;
+const getCategories = createSelector(
+  customCategories,
+  customCategories => [...defaultCategories, ...customCategories]
+);
+
 const mapStateToProps = (state) => ({
   list: state.tasks.list,
-  categories: [...defaultCategories, ...state.settings.categories]
+  categories: getCategories(state),
 });
 
 @connect(mapStateToProps)

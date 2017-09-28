@@ -41,7 +41,7 @@ export default class Task extends Component {
     handleStart = () => {
       const { id, uid } = this.props;
       const periods = [...this.props.periods, { dateStart: +Date.now() }];
-      this.props.start(id, {  uid, periods });
+      this.props.updateTask(id, { isPaused: false, uid, periods });
     }
 
     handleStop = () => {
@@ -49,12 +49,12 @@ export default class Task extends Component {
       const periods = this.props.periods.map(el =>
         el.dateComplete ? el : {...el, dateComplete: +Date.now()}
       );
-      this.props.stop(id, { uid, periods });
+      this.props.updateTask(id, { isPaused: true, uid, periods });
     }
 
     handleReset = () => {
       const { id, uid } = this.props;
-      this.props.reset(id, { uid });
+      this.props.updateTask(id, { periods: [], uid });
     }
 
     handleUpdate = (params) => {
@@ -63,7 +63,7 @@ export default class Task extends Component {
       if (isComplete && !isPaused) {
           this.handleStop();
       }
-      this.props.onUpdate(id, { ...params, uid });
+      this.props.updateTask(id, { ...params, uid });
     }
 
     handleComplete = (e, isComplete) => {

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { SMALL_SCREEN } from '../../config/constants';
 import { defaultCategories } from '../../config/constants';
+import { createSelector } from 'reselect';
 
 import Sidebar from '../Sidebar.jsx';
 import View from '../View.jsx';
@@ -19,13 +20,19 @@ const FadingBlock = ({ component: Component, ...rest }) => (
       const task = props.match.params.task;
       const list = rest.list;
       const item = list[task];
-      const category = item ? rest.categories.find(cat => cat.id === item.category).name : null;
-      return <Component {...props} {...{...rest, list: null, item, category}} />;
+      const category = item ? rest.categories.find(cat => cat.id === item.category) : null;
+      return <Component {...props} {...{...rest, list: null, item, category: category ? category.name : null}} />;
   }}/>
 );
 
+const customCategories = state => state.settings.categories;
+const getCategories = createSelector(
+  customCategories,
+  customCategories => [...defaultCategories, ...customCategories]
+);
+
 const mapStateToProps = state => ({
-    categories: [...defaultCategories, ...state.settings.categories],
+    categories: getCategories(state),
     list: state.tasks.list,
     loggedinUID: state.session.user.uid,
 });

@@ -4,14 +4,24 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { connect } from 'react-redux';
 
+import { createSelector } from 'reselect'
+
 import { defaultCategories } from '../config/constants';
 import style from './FilterTasks.less';
 
+
+const list = state => state.tasks.list;
+
+const getUsedCategories = createSelector(
+  list,
+  list => Object.keys(list).reduce((result, key) =>
+    result.find(cat => cat.id === list[key].category)
+    ? result.map(el => el.id === list[key].category ? { id: el.id, number: el.number + 1 } : el)
+    : [...result, { id: list[key].category, number: 1 }], [])
+);
+
 const mapStateToProps = (state) => ({
-  usedCategories: Object.keys(state.tasks.list).reduce((result, key) =>
-    result.find(cat => cat.id === state.tasks.list[key].category)
-    ? result.map(el => el.id === state.tasks.list[key].category ? { id: el.id, number: el.number + 1 } : el)
-    : [...result, { id: state.tasks.list[key].category, number: 1 }], []),
+  usedCategories: getUsedCategories(state),
   categories: [...defaultCategories, ...state.settings.categories]
 });
 
