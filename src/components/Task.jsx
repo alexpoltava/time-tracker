@@ -134,7 +134,6 @@ export default class Task extends Component {
                   </Media>
                   <div className={style.controls}>
                     <IconButton
-                        tooltip="Reset"
                         disabled={(!this.props.isPaused) || isComplete || this.props.readOnly}
                         style={button}
                         onClick={this.handleReset}
@@ -143,7 +142,6 @@ export default class Task extends Component {
                     </IconButton>
                     <IconButton
                         disabled={isComplete || this.props.readOnly}
-                        tooltip="Start"
                         style={this.props.isPaused ? button : { ...button, display: 'none' }}
                         onClick={this.handleStart}
                     >
@@ -151,7 +149,6 @@ export default class Task extends Component {
                     </IconButton>
                     <IconButton
                         disabled={isComplete || this.props.readOnly}
-                        tooltip="Stop"
                         style={this.props.isPaused ? { ...button, display: 'none' } : button}
                         onClick={this.handleStop}
                     >
@@ -166,7 +163,6 @@ export default class Task extends Component {
                     />
                     <IconButton
                         disabled={this.props.readOnly}
-                        tooltip="Delete task"
                         style={!this.state.isHovered ? { ...deleteStyle, visibility: 'hidden', opacity: '0' } : deleteStyle }
                         onClick={this.handleDelete}
                     >
