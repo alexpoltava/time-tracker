@@ -160,14 +160,7 @@ export default class TaskPage extends Component {
         const { category, item } = this.props;
         return (
             item
-            ? <CSSTransitionGroup
-                  transitionName="fading"
-                  transitionAppear={true}
-                  transitionAppearTimeout={500}
-                  transitionEnter={false}
-                  transitionLeave={false}
-              >
-                <div
+            ? <div
                   key={1}
                   style={style.root}
                 >
@@ -222,13 +215,6 @@ export default class TaskPage extends Component {
                         floatingLabelFixed
                         value={new Date(item.periods[0].dateStart)}
                       /><br />
-                    <Checkbox
-                        id="completed"
-                        label="Task completed"
-                        checked={this.props.isComplete}
-                        disabled
-                        style={{marginTop: '36px'}}
-                      /><br />
                     </div>
                   </div>
                   <Timeline
@@ -251,7 +237,6 @@ export default class TaskPage extends Component {
                     />
                   </div>
               </div>
-              </CSSTransitionGroup>
             : <div style={style.root}>
                   <CircularProgress />
               </div>

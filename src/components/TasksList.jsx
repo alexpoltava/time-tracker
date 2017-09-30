@@ -73,14 +73,7 @@ export default class TaskList extends Component {
           <div className={styles.root}>
             {
               !isFetching
-              ? <CSSTransitionGroup
-                    transitionName="fading"
-                    transitionEnter={true}
-                    transitionEnterTimeout={500}
-                    transitionLeave={true}
-                    transitionLeaveTimeout={500}
-                    style={{width: '100%'}}
-                >{
+              ?
                   this.props.processedList.map(key => {
                     const item = list[key];
                     const timer = timers.find(timer => (timer.id === key));
@@ -113,8 +106,7 @@ export default class TaskList extends Component {
                     );
                     }
                   )
-                 }
-                </CSSTransitionGroup>
+
               : <CircularProgress />
             }
             <Snackbar

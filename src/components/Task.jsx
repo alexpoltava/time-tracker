@@ -19,20 +19,20 @@ export default class Task extends Component {
     constructor(props) {
       super(props);
         this.state = {
-          isHovered: false,
+          isHovered: true,
         }
     }
 
     handleDelete = () => {
         this.props.onDelete({ key: this.props.id, uid: this.props.uid });
     }
-    handleMouseOver = () => {
-        this.setState({isHovered: true});
-    }
-
-    handleMouseOut = () => {
-        this.setState({isHovered: false});
-    }
+    // handleMouseOver = () => {
+    //     this.setState({isHovered: true});
+    // }
+    //
+    // handleMouseOut = () => {
+    //     this.setState({isHovered: false});
+    // }
 
     handleDoubleClick = () => {
         this.props.onDoubleClick(this.props.id)
