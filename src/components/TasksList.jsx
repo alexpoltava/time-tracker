@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import CircularProgress from 'material-ui/CircularProgress';
 import Snackbar from 'material-ui/Snackbar';
-import { CSSTransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import Task from './Task.jsx';
 import { action, UPDATE_TASK } from '../actions';
@@ -59,7 +59,7 @@ export default class TaskList extends Component {
       this.props.removeTask(payload);
     }
 
-    onDoubleClick = (id) => {
+    onClick = (id) => {
       const { match, history } = this.props;
       const url = match.url;
       history.push(`${url}${url.endsWith("/") ? "" : "/"}${id}`);
@@ -73,40 +73,50 @@ export default class TaskList extends Component {
           <div className={styles.root}>
             {
               !isFetching
-              ?
+              ? <TransitionGroup
+                  style={{width: '100%'}}
+                >
+                {
                   this.props.processedList.map(key => {
                     const item = list[key];
                     const timer = timers.find(timer => (timer.id === key));
                     const category = this.props.categories.find(cat => cat.id === item.category);
-                    return (item
-                      ? <Task
-                          key={key}
-                          id={item.id}
-                          name={item.name}
-                          category={category ? category.name : null}
-                          tagsArray={item.tagsArray}
-                          description={item.description}
-                          dateStart={item.dateStart || 0}
-                          dateComplete={item.dateComplete || 0}
-                          periods={item.periods || 0}
-                          isPaused={item.isPaused}
-                          time={timer.time}
-                          status={timer.status}
-                          start={this.props.start}
-                          stop={this.props.stop}
-                          reset={this.props.reset}
-                          onDelete={this.onDelete}
-                          updateTask={this.props.onUpdate}
-                          onDoubleClick={this.onDoubleClick}
-                          isComplete={item.isComplete}
-                          uid={this.props.uid}
-                          readOnly={this.props.readOnly}
-                        />
+                    return (
+                      item
+                      ? <CSSTransition
+                              classNames="fading"
+                              key={key}
+                              timeout={{enter: 500, exit: 500}}
+                        >
+                          <Task
+                            id={item.id}
+                            key={key}
+                            name={item.name}
+                            category={category ? category.name : null}
+                            tagsArray={item.tagsArray}
+                            description={item.description}
+                            dateStart={item.dateStart || 0}
+                            dateComplete={item.dateComplete || 0}
+                            periods={item.periods || 0}
+                            isPaused={item.isPaused}
+                            time={timer.time}
+                            status={timer.status}
+                            start={this.props.start}
+                            stop={this.props.stop}
+                            reset={this.props.reset}
+                            onDelete={this.onDelete}
+                            updateTask={this.props.onUpdate}
+                            onClick={this.onClick}
+                            isComplete={item.isComplete}
+                            uid={this.props.uid}
+                            readOnly={this.props.readOnly}
+                          />
+                        </CSSTransition>
                       : null
                     );
-                    }
-                  )
-
+                  })
+                }
+                </TransitionGroup>
               : <CircularProgress />
             }
             <Snackbar

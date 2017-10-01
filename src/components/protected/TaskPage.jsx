@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CSSTransitionGroup } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
@@ -137,12 +137,14 @@ export default class TaskPage extends Component {
                 flexDirection: 'column',
                 alignItems: 'center',
                 width: this.props.isMenuOpen ? '70%' : '100%',
-              },
-            columnsContainer: {
-                display: 'flex',
-                flexDirection: 'row',
             },
-            column: {
+            container: {
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+            },
+            field: {
                 margin: '12px',
             },
             buttonBox: {
@@ -160,19 +162,25 @@ export default class TaskPage extends Component {
         const { category, item } = this.props;
         return (
             item
-            ? <div
-                  key={1}
+            ? <TransitionGroup>
+              <CSSTransition
+                classNames="fading"
+                appear={true}
+                key={1}
+                timeout={{appear: 500}}
+              >
+                <div
                   style={style.root}
                 >
                   <h3>Task info</h3>
-                  <div style={style.columnsContainer}>
-                    <div style={style.column}>
+                  <div style={style.container}>
                       <TextField
                         id="name"
                         disabled={this.props.readOnly}
                         floatingLabelText="Task name"
                         floatingLabelFixed
                         errorText={this.state.isNameValid ? '' : 'Task name is required'}
+                        style={style.field}
                         value={this.state.name}
                         onChange={this.handleNameChange}
                       /><br />
@@ -181,6 +189,7 @@ export default class TaskPage extends Component {
                         disabled={this.props.readOnly}
                         floatingLabelText="Task description"
                         floatingLabelFixed
+                        style={style.field}
                         value={this.state.description}
                         onChange={this.handleDescriptionChange}
                       /><br />
@@ -189,6 +198,7 @@ export default class TaskPage extends Component {
                         disabled={this.props.readOnly}
                         floatingLabelText="Category"
                         floatingLabelFixed
+                        style={style.field}
                         value={this.state.category}
                         onChange={this.handleCategoryChange}
                       >
@@ -198,13 +208,12 @@ export default class TaskPage extends Component {
                         )
                       }
                       </SelectField><br />
-                    </div>
-                    <div style={style.column}>
                       <TextField
                         id="tags"
                         disabled={this.props.readOnly}
                         floatingLabelText="Task tags"
                         floatingLabelFixed
+                        style={style.field}
                         value={this.state.tagsString}
                         onChange={this.handleTagsChange}
                       /><br />
@@ -212,10 +221,10 @@ export default class TaskPage extends Component {
                         id="started"
                         disabled
                         floatingLabelText="Task started"
+                        style={style.field}
                         floatingLabelFixed
                         value={new Date(item.periods[0].dateStart)}
                       /><br />
-                    </div>
                   </div>
                   <Timeline
                     data={this.state.data}
@@ -236,10 +245,12 @@ export default class TaskPage extends Component {
                       onClick={this.handleHide}
                     />
                   </div>
-              </div>
-            : <div style={style.root}>
-                  <CircularProgress />
-              </div>
+                </div>
+               </CSSTransition>
+               </TransitionGroup>
+              : <div style={style.root}>
+                    <CircularProgress />
+                </div>
         );
     }
 }

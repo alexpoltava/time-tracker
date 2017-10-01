@@ -19,32 +19,35 @@ export default class Task extends Component {
     constructor(props) {
       super(props);
         this.state = {
-          isHovered: true,
+          isHovered: false,
         }
     }
 
-    handleDelete = () => {
+    handleDelete = (e) => {
+        e.stopPropagation();
         this.props.onDelete({ key: this.props.id, uid: this.props.uid });
     }
-    // handleMouseOver = () => {
-    //     this.setState({isHovered: true});
-    // }
-    //
-    // handleMouseOut = () => {
-    //     this.setState({isHovered: false});
-    // }
-
-    handleDoubleClick = () => {
-        this.props.onDoubleClick(this.props.id)
+    handleMouseOver = () => {
+        this.setState({isHovered: true});
     }
 
-    handleStart = () => {
+    handleMouseOut = () => {
+        this.setState({isHovered: false});
+    }
+
+    handleClick = () => {
+        this.props.onClick(this.props.id)
+    }
+
+    handleStart = (e) => {
+      e.stopPropagation();
       const { id, uid } = this.props;
       const periods = [...this.props.periods, { dateStart: +Date.now() }];
       this.props.updateTask(id, { isPaused: false, uid, periods });
     }
 
-    handleStop = () => {
+    handleStop = (e) => {
+      e ? e.stopPropagation() : () => {};
       const { id, uid } = this.props;
       const periods = this.props.periods.map(el =>
         el.dateComplete ? el : {...el, dateComplete: +Date.now()}
@@ -52,7 +55,8 @@ export default class Task extends Component {
       this.props.updateTask(id, { isPaused: true, uid, periods });
     }
 
-    handleReset = () => {
+    handleReset = (e) => {
+      e.stopPropagation();
       const { id, uid } = this.props;
       this.props.updateTask(id, { periods: [], uid });
     }
@@ -68,6 +72,10 @@ export default class Task extends Component {
 
     handleComplete = (e, isComplete) => {
       this.handleUpdate({ isComplete });
+    }
+
+    handleCheckboxClick = (e) => {
+      e.stopPropagation();
     }
 
     render() {
@@ -100,7 +108,7 @@ export default class Task extends Component {
                 zDepth={2 + this.state.isHovered}
                 onMouseOver={this.handleMouseOver}
                 onMouseOut={this.handleMouseOut}
-                onDoubleClick={this.handleDoubleClick}
+                onClick={this.handleClick}
               >
                   <Media minDeviceWidth={SMALL_SCREEN}>
                     {(match) => (
@@ -159,11 +167,12 @@ export default class Task extends Component {
                         inputStyle={checkbox}
                         disabled={this.props.readOnly}
                         checked={isComplete}
+                        onClick={this.handleCheckboxClick}
                         onCheck={this.handleComplete}
                     />
                     <IconButton
                         disabled={this.props.readOnly}
-                        style={!this.state.isHovered ? { ...deleteStyle, visibility: 'hidden', opacity: '0' } : deleteStyle }
+                        style={deleteStyle}
                         onClick={this.handleDelete}
                     >
                       <Delete
@@ -171,7 +180,7 @@ export default class Task extends Component {
                       />
                     </IconButton>
                 </div>
-            </Paper>
+             </Paper>
           </div>
         )
     }
