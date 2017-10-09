@@ -141,7 +141,6 @@ export default class TaskPage extends Component {
             container: {
                 display: 'flex',
                 justifyContent: 'center',
-                flexDirection: 'row',
                 flexWrap: 'wrap',
             },
             field: {
@@ -216,14 +215,6 @@ export default class TaskPage extends Component {
                         style={style.field}
                         value={this.state.tagsString}
                         onChange={this.handleTagsChange}
-                      /><br />
-                      <TextField
-                        id="started"
-                        disabled
-                        floatingLabelText="Task started"
-                        style={style.field}
-                        floatingLabelFixed
-                        value={new Date(item.periods[0].dateStart)}
                       /><br />
                   </div>
                   <Timeline

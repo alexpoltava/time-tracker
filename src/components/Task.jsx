@@ -36,6 +36,7 @@ export default class Task extends Component {
     }
 
     handleClick = () => {
+        console.log('handleClick');
         this.props.onClick(this.props.id)
     }
 
@@ -56,6 +57,7 @@ export default class Task extends Component {
     }
 
     handleReset = (e) => {
+
       e.stopPropagation();
       const { id, uid } = this.props;
       this.props.updateTask(id, { periods: [], uid });
@@ -164,7 +166,6 @@ export default class Task extends Component {
                     </IconButton>
                     <Checkbox
                         style={checkbox}
-                        inputStyle={checkbox}
                         disabled={this.props.readOnly}
                         checked={isComplete}
                         onClick={this.handleCheckboxClick}

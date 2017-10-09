@@ -136,7 +136,7 @@ export default class ViewSettings extends Component {
                       label="add"
                       style={style.addNew}
                       overlayStyle={{textAlign: 'left'}}
-                      onTouchTap={this.handleAddCategory}
+                      onClick={this.handleAddCategory}
                   />
                   </div>
                   <div style={{display: 'flex', flexDirection: 'row'}}>
@@ -158,7 +158,7 @@ export default class ViewSettings extends Component {
                       secondary
                       style={style.delete}
                       overlayStyle={{textAlign: 'left'}}
-                      onTouchTap={this.handleRemoveCategory}
+                      onClick={this.handleRemoveCategory}
                     />
                   </div>
                 </div>

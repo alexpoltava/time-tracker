@@ -122,7 +122,7 @@ export default class Login extends Component {
                           disabled={this.props.isLoggedIn}
                           primary={true}
                           style={{margin: '16px'}}
-                          onTouchTap={this.handleLogin}
+                          onClick={this.handleLogin}
                         />
                     }
                   </Paper>

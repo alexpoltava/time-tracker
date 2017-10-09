@@ -155,7 +155,7 @@ export default class Register extends Component {
                       primary={true}
                       style={{margin: '16px'}}
                       disabled={this.props.registrationSuccess || this.props.isLoggedIn}
-                      onTouchTap={this.handleRegister}
+                      onClick={this.handleRegister}
                     />
                 }
               </Paper>

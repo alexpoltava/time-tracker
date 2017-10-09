@@ -164,12 +164,12 @@ class AddTask extends Component {
              <FlatButton
                label="CANCEL"
                primary={false}
-               onTouchTap={this.handleClose}
+               onClick={this.handleClose}
              />,
              <FlatButton
                label="ADD"
                primary={true}
-               onTouchTap={this.handleAdd}
+               onClick={this.handleAdd}
              />
            ];
         return (
@@ -179,7 +179,7 @@ class AddTask extends Component {
                     label='Add new task'
                     icon={<AddBox />}
                     disabled={this.state.showAddDialog || this.props.readOnly}
-                    onTouchTap={this.handleOpen}
+                    onClick={this.handleOpen}
                 />
                 <Dialog
                     actions={actions}
